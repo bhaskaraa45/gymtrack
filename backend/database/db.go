@@ -6,14 +6,19 @@ import (
 	"log"
 	"strings"
 
-	"github.com/bhaskaraa45/todo_app/models"
+	"github.com/bhaskaraa45/backend/todo_app/models"
 	_ "github.com/lib/pq"
 )
 
-func InsertData(data models.TodoModel, db *sql.DB) int {
+var db *sql.DB
+
+func InitDB(datab *sql.DB) {
+	db = datab
+}
+
+func InsertData(data models.TodoModel) int {
 	query := `INSERT INTO todos (title, description, isDone, tag, "User", time )
 		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
-
 	var id int
 	err := db.QueryRow(query, data.Title, data.Description, data.IsDone, data.Tag, data.User, data.Time).Scan(&id)
 	if err != nil {
@@ -22,7 +27,7 @@ func InsertData(data models.TodoModel, db *sql.DB) int {
 	return id
 }
 
-func DeleteData(id int, db *sql.DB) {
+func DeleteData(id int) {
 	query := "DELETE FROM todos WHERE id = $1"
 
 	result, err := db.Exec(query, id)
@@ -38,7 +43,7 @@ func DeleteData(id int, db *sql.DB) {
 	log.Printf("Deleted %d rows", deletedRow)
 }
 
-func SearchData(id int, db *sql.DB) *models.TodoModel {
+func SearchData(id int) *models.TodoModel {
 	query := "SELECT * FROM todos WHERE id = $1"
 
 	row := db.QueryRow(query, id)
@@ -58,7 +63,7 @@ func SearchData(id int, db *sql.DB) *models.TodoModel {
 	return &todo
 }
 
-func SearchDataByUserId(id string, db *sql.DB) *models.TodoModel {
+func SearchDataByUserId(id string) *models.TodoModel {
 	query := `SELECT * FROM todos WHERE "User" = $1`
 
 	row := db.QueryRow(query, id)
@@ -79,7 +84,7 @@ func SearchDataByUserId(id string, db *sql.DB) *models.TodoModel {
 	return &todo
 }
 
-func UpdateData(id int, todo models.TodoModel, db *sql.DB) {
+func UpdateData(id int, todo models.TodoModel) {
 	fields := map[string]interface{}{
 		"title":       todo.Title,
 		"description": todo.Description,
@@ -128,6 +133,35 @@ func UpdateData(id int, todo models.TodoModel, db *sql.DB) {
 	} else {
 		fmt.Printf("Updated %d rows for ID: %d\n", affectedRows, id)
 	}
+}
+
+func SearchAllDataByUserId(id string) ([]models.TodoModel, error) {
+	query := `SELECT * FROM todos WHERE "User" = $1`
+
+	rows, err := db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var todos []models.TodoModel
+
+	for rows.Next() {
+		var todo models.TodoModel
+		err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.Tag, &todo.User, &todo.Time)
+		if err != nil {
+			return nil, err
+		}
+		todos = append(todos, todo)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	fmt.Println(todos)
+
+	return todos, nil
 }
 
 // func CreateTable() {
