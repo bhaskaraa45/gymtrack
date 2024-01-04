@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/bhaskaraa45/backend/todo_app/database"
+	"github.com/bhaskaraa45/backend/todo_app/models"
 	"github.com/gorilla/mux"
 )
 
@@ -88,4 +89,21 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode("Successfully deleted todo")
+}
+
+func CreateTodo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var todo models.TodoModel
+	err := json.NewDecoder(r.Body).Decode(&todo)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode("Invalid JSON format")
+		return
+	}
+
+	id := database.InsertData(todo)
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]int{"id": id})
 }
