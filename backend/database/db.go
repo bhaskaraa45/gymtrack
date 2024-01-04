@@ -27,20 +27,23 @@ func InsertData(data models.TodoModel) int {
 	return id
 }
 
-func DeleteData(id int) {
+func DeleteData(id int) bool {
 	query := "DELETE FROM todos WHERE id = $1"
 
 	result, err := db.Exec(query, id)
 	if err != nil {
 		log.Fatal(err)
+		return false
 	}
 
 	deletedRow, err := result.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
+		return false
 	}
 
 	log.Printf("Deleted %d rows", deletedRow)
+	return true
 }
 
 func SearchData(id int) *models.TodoModel {

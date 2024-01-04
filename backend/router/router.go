@@ -5,13 +5,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Router() *mux.Router  {
+func Router() *mux.Router {
 
 	r := mux.NewRouter()
 
 	r.HandleFunc("/todos/{id}", controller.GetTodos).Methods("GET")
 	r.HandleFunc("/todo/{id}", controller.GetTodo).Methods("GET")
-
+	r.HandleFunc("/todo/{id}", controller.DeleteTodo).Methods("DELETE")
 
 	return r
 }
