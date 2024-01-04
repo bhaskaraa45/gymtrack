@@ -107,3 +107,44 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]int{"id": id})
 }
+
+func UpdateTodo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+
+	idStr, ok := params["id"]
+	var todo models.TodoModel
+
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode("Please provide a valid ID")
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode("Invalid ID")
+		return
+	}
+
+	err2 := json.NewDecoder(r.Body).Decode(&todo)
+	if err2 != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode("Invalid JSON format")
+		return
+	}
+
+	result := database.UpdateData(id, todo)
+
+	if !result {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode("Failed to update")
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	json.NewEncoder(w).Encode("Successfully updated")
+
+}

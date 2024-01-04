@@ -87,7 +87,7 @@ func SearchDataByUserId(id string) *models.TodoModel {
 	return &todo
 }
 
-func UpdateData(id int, todo models.TodoModel) {
+func UpdateData(id int, todo models.TodoModel) bool {
 	fields := map[string]interface{}{
 		"title":       todo.Title,
 		"description": todo.Description,
@@ -112,7 +112,7 @@ func UpdateData(id int, todo models.TodoModel) {
 
 	if index == 1 {
 		fmt.Println("No data given")
-		return
+		return false
 	}
 
 	query := fmt.Sprintf(`UPDATE todos SET %s WHERE id = $%d`, strings.Join(setStatements, ", "), index)
@@ -124,11 +124,13 @@ func UpdateData(id int, todo models.TodoModel) {
 	result, err := db.Exec(query, values...)
 	if err != nil {
 		log.Fatal(err)
+		return false
 	}
 
 	affectedRows, err := result.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
+		return false
 	}
 
 	if affectedRows == 0 {
@@ -136,6 +138,7 @@ func UpdateData(id int, todo models.TodoModel) {
 	} else {
 		fmt.Printf("Updated %d rows for ID: %d\n", affectedRows, id)
 	}
+	return true
 }
 
 func SearchAllDataByUserId(id string) ([]models.TodoModel, error) {
