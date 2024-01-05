@@ -175,8 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: (){
         Navigator.push(context, CustomPageRoute(child: const  AddTodoScreen(),startPos: const Offset(0, 1)));
       },
-      // child: ,
-
+      backgroundColor: MyColors().purple,
+      child: Icon(Icons.add_rounded, size: 36,color: MyColors().primary2,),
     );
   } 
 

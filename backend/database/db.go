@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	// "os"
 	"strings"
 
 	"github.com/bhaskaraa45/backend/todo_app/models"
@@ -170,34 +171,34 @@ func SearchAllDataByUserId(id string) ([]models.TodoModel, error) {
 	return todos, nil
 }
 
-// func CreateTable() {
+func CreateTable() {
 
-// 	connStr := os.Getenv("DB_CONNSTRING")
-// 	db, err := sql.Open("postgres", connStr)
-// 	fmt.Println(1)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fmt.Println(2)
+	// connStr := os.Getenv("DB_CONNSTRING")
+	// db, err := sql.Open("postgres", connStr)
+	// fmt.Println(1)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(2)
 
-// 	if err = db.Ping(); err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fmt.Println(3)
+	// if err = db.Ping(); err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(3)
 
-// 	query := `CREATE TABLE IF NOT EXISTS todos (
-// 		id SERIAL PRIMARY KEY,
-// 		title VARCHAR(100) NOT NULL,
-// 		description VARCHAR(1000),
-// 		isDone BOOLEAN,
-// 		tag VARCHAR(100),
-// 		"User" VARCHAR(500),
-// 		time timestamp
-// 	)`
-// 	_, err = db.Exec(query)
+	query := `CREATE TABLE IF NOT EXISTS todos (
+		id SERIAL PRIMARY KEY,
+		title VARCHAR(100) NOT NULL,
+		description VARCHAR(1000),
+		isDone BOOLEAN,
+		tag VARCHAR(100),
+		"User" VARCHAR(500),
+		time timestamp
+	)`
+	_, err := db.Exec(query)
 
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// }
+}
