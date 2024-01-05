@@ -12,11 +12,17 @@ class TasksCard extends StatefulWidget {
 }
 
 class _TasksCardState extends State<TasksCard> {
+  bool isDone = false;
+
   Widget checkBox() {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          setState(() {
+            isDone = true;
+          });
+        },
         borderRadius: BorderRadius.circular(100),
         child: Container(
           height: 30,
@@ -24,6 +30,31 @@ class _TasksCardState extends State<TasksCard> {
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: widget.color, width: 3)),
+        ),
+      ),
+    );
+  }
+
+  Widget completeCheckBox() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            isDone = false;
+          });
+        },
+        borderRadius: BorderRadius.circular(100),
+        child: Container(
+          height: 30,
+          width: 30,
+          decoration:
+              BoxDecoration(shape: BoxShape.circle, color: MyColors().primary3),
+          child: Icon(
+            Icons.done_rounded,
+            size: 26,
+            color: MyColors().textColor,
+          ),
         ),
       ),
     );
@@ -41,7 +72,7 @@ class _TasksCardState extends State<TasksCard> {
           const SizedBox(
             width: 20,
           ),
-          checkBox(),
+          isDone ? completeCheckBox() : checkBox(),
           const SizedBox(
             width: 20,
           ),
@@ -57,6 +88,9 @@ class _TasksCardState extends State<TasksCard> {
                   style: TextStyle(
                       color: MyColors().textColor,
                       fontSize: 20,
+                      decoration: isDone?  TextDecoration.lineThrough : TextDecoration.none,
+                      decorationColor: MyColors().textColor,
+                      decorationThickness: 2,
                       fontWeight: FontWeight.w300),
                 ),
                 Text(
