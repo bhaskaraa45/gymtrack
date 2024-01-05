@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/tag_model.dart';
+import 'package:todo/models/todo_model.dart';
 import 'package:todo/widgets/categories_card.dart';
 import 'package:todo/widgets/svg_icon.dart';
+import 'package:todo/widgets/tasks_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
     TagModel(tag: 'Coding', completeTasks: 25, tasks: 25),
     TagModel(tag: 'Othets', completeTasks: 12, tasks: 18),
   ];
+
+TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", description: "1", isDone: false, tag: "tag", User: "bhaskar", time: DateTime.now());
 
   Widget headerIcons() {
     return Container(
@@ -137,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: SizedBox(
-                height: MediaQuery.of(context).size.width * 0.27 ,
+                height: 100 ,
                 child: Expanded(child: listOfTags())),
             ),
             const SizedBox(
@@ -154,6 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 16),
               ),
             ),
+            
+            TasksCard(color: MyColors().purple,todo: todoModel,)
           ],
         ),
       )),

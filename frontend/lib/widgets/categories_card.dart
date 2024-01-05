@@ -38,10 +38,9 @@ class CategoriesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Container(
-      height: size.width * 0.27,
-      width: size.width * 0.65,
+      height: 100,
+      width: 250,
       decoration: BoxDecoration(
           color: MyColors().primary2, borderRadius: BorderRadius.circular(24)),
       child: Padding(
@@ -62,7 +61,7 @@ class CategoriesCard extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 8,
+              height: 10,
             ),
             processLine()
           ],
