@@ -16,7 +16,7 @@ var db *sql.DB
 
 func main() {
 	env.LoadEnv()
-	
+
 	connStr := os.Getenv("DB_CONNSTRING")
 	var err error
 	db, err = sql.Open("postgres", connStr)
@@ -33,5 +33,5 @@ func main() {
 	database.InitDB(db)
 
 	r := router.Router()
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":3000", r))
 }
