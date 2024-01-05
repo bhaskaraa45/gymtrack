@@ -20,11 +20,9 @@ func main() {
 	connStr := os.Getenv("DB_CONNSTRING")
 	var err error
 	db, err = sql.Open("postgres", connStr)
-	fmt.Println(1)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(2)
 
 	if err = db.Ping(); err != nil {
 		log.Fatal(err)
@@ -32,6 +30,12 @@ func main() {
 
 	database.InitDB(db)
 
+	fmt.Println("Server starting @ 3000....")
+
 	r := router.Router()
-	log.Fatal(http.ListenAndServe(":3000", r))
+	err = http.ListenAndServe(":3000", r)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -14,6 +14,7 @@ var db *sql.DB
 
 func InitDB(datab *sql.DB) {
 	db = datab
+	fmt.Println("DB initialized")
 }
 
 func InsertData(data models.TodoModel) int {
