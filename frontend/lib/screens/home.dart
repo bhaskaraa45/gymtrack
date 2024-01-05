@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/tag_model.dart';
 import 'package:todo/models/todo_model.dart';
+import 'package:todo/screens/add_todo.dart';
 import 'package:todo/widgets/categories_card.dart';
+import 'package:todo/widgets/custom_route.dart';
 import 'package:todo/widgets/svg_icon.dart';
 import 'package:todo/widgets/tasks_card.dart';
 
@@ -22,49 +25,103 @@ class _HomeScreenState extends State<HomeScreen> {
     TagModel(tag: 'Othets', completeTasks: 12, tasks: 18),
   ];
 
-TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", description: "1", isDone: false, tag: "tag", User: "bhaskar", time: DateTime(2024,1,1));
+  List<TodoModel> todos = [
+    TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+    TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+    TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+    TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+    TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+    TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+        TodoModel(
+        id: 10,
+        title: "Do one dsa question",
+        description: "1",
+        isDone: false,
+        tag: "tag",
+        User: "bhaskar",
+        time: DateTime(2024, 1, 1)),
+  ];
 
   Widget headerIcons() {
-    return Container(
-      // color: Colors.amber,
-      child: Row(
-        children: [
-          InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(36),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: SvgIcon(
-                  "assets/icons/menu.svg",
-                  size: 20,
-                ),
-              )),
-          const Spacer(),
-          InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(36),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: SvgIcon(
-                  "assets/icons/search-normal.svg",
-                  size: 28,
-                ),
-              )),
-          const SizedBox(
-            width: 16,
-          ),
-          InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(36),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: SvgIcon(
-                  "assets/icons/user.svg",
-                  size: 30,
-                ),
-              )),
-        ],
-      ),
+    return Row(
+      children: [
+        InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(36),
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SvgIcon(
+                "assets/icons/menu.svg",
+                size: 20,
+              ),
+            )),
+        const Spacer(),
+        InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(36),
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SvgIcon(
+                "assets/icons/search-normal.svg",
+                size: 28,
+              ),
+            )),
+        const SizedBox(
+          width: 16,
+        ),
+        InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(36),
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SvgIcon(
+                "assets/icons/user.svg",
+                size: 30,
+              ),
+            )),
+      ],
     );
   }
 
@@ -100,9 +157,39 @@ TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", descriptio
         });
   }
 
+  Widget listOfTasks() {
+    return ListView.builder(
+        itemCount: todos.length,
+        itemBuilder: (ctx, index) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+            child: TasksCard(
+                color: index % 2 == 0 ? MyColors().blue : MyColors().purple,
+                todo: todos[index]),
+          );
+        });
+  }
+
+  Widget floatingActionButton(){
+    return FloatingActionButton(
+      onPressed: (){
+        Navigator.push(context, CustomPageRoute(child: const  AddTodoScreen(),startPos: const Offset(0, 1)));
+      },
+      // child: ,
+
+    );
+  } 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: MyColors().primary
+        ),
+      ),
+      floatingActionButton: floatingActionButton() ,
       backgroundColor: MyColors().primary,
       body: SafeArea(
           child: Padding(
@@ -135,14 +222,13 @@ TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", descriptio
                     fontSize: 16),
               ),
             ),
-            const SizedBox(
-              height: 16,
-            ),
+            // const SizedBox(
+            //   height: 16,
+            // ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
-              child: SizedBox(
-                height: 100 ,
-                child: Expanded(child: listOfTags())),
+              child:
+                  SizedBox(height: 100, child: Expanded(child: listOfTags())),
             ),
             const SizedBox(
               height: 36,
@@ -158,8 +244,7 @@ TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", descriptio
                     fontSize: 16),
               ),
             ),
-            
-            TasksCard(color: MyColors().purple,todo: todoModel,)
+            Expanded(child: listOfTasks())
           ],
         ),
       )),

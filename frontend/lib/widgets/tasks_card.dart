@@ -62,14 +62,14 @@ class _TasksCardState extends State<TasksCard> {
   }
 
   String formatDateTime(DateTime dateTime) {
-  if (DateTime.now().day == dateTime.day &&
-      DateTime.now().month == dateTime.month &&
-      DateTime.now().year == dateTime.year) {
-    return DateFormat('hh:mm a').format(dateTime);
-  } else {
-    return DateFormat('hh:mm a, dd MMM yyyy').format(dateTime);
+    if (DateTime.now().day == dateTime.day &&
+        DateTime.now().month == dateTime.month &&
+        DateTime.now().year == dateTime.year) {
+      return DateFormat('hh:mm a').format(dateTime);
+    } else {
+      return DateFormat('hh:mm a, dd MMM yyyy').format(dateTime);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,9 @@ class _TasksCardState extends State<TasksCard> {
                   style: TextStyle(
                       color: MyColors().textColor,
                       fontSize: 20,
-                      decoration: isDone?  TextDecoration.lineThrough : TextDecoration.none,
+                      decoration: isDone
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
                       decorationColor: MyColors().textColor,
                       decorationThickness: 2,
                       fontWeight: FontWeight.w300),
