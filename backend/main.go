@@ -4,20 +4,19 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	// "net/http"
+	"net/http"
 	"os"
 
 	"github.com/bhaskaraa45/backend/todo_app/database"
 	"github.com/bhaskaraa45/backend/todo_app/env"
-	// "github.com/bhaskaraa45/backend/todo_app/router"
+	"github.com/bhaskaraa45/backend/todo_app/router"
 )
 
 var db *sql.DB
 
 func main() {
 	env.LoadEnv()
-
+	
 	connStr := os.Getenv("DB_CONNSTRING")
 	var err error
 	db, err = sql.Open("postgres", connStr)
@@ -32,8 +31,7 @@ func main() {
 	}
 
 	database.InitDB(db)
-	database.CreateTable()
 
-	// r := router.Router()
-	// log.Fatal(http.ListenAndServe(":8080", r))
+	r := router.Router()
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
