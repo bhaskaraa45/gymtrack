@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TagModel(tag: 'Othets', completeTasks: 12, tasks: 18),
   ];
 
-TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", description: "1", isDone: false, tag: "tag", User: "bhaskar", time: DateTime.now());
+TodoModel todoModel = TodoModel(id: 10, title: "Do one dsa question", description: "1", isDone: false, tag: "tag", User: "bhaskar", time: DateTime(2024,1,1));
 
   Widget headerIcons() {
     return Container(

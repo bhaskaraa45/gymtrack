@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/todo_model.dart';
 
@@ -60,6 +61,16 @@ class _TasksCardState extends State<TasksCard> {
     );
   }
 
+  String formatDateTime(DateTime dateTime) {
+  if (DateTime.now().day == dateTime.day &&
+      DateTime.now().month == dateTime.month &&
+      DateTime.now().year == dateTime.year) {
+    return DateFormat('hh:mm a').format(dateTime);
+  } else {
+    return DateFormat('hh:mm a, dd MMM yyyy').format(dateTime);
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -94,7 +105,7 @@ class _TasksCardState extends State<TasksCard> {
                       fontWeight: FontWeight.w300),
                 ),
                 Text(
-                  widget.todo.time.toUtc().toIso8601String(),
+                  formatDateTime(widget.todo.time),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
