@@ -33,4 +33,83 @@ class ApiService {
       throw Exception('Failed to load todos');
     }
   }
+
+  Future<TodoModel> getTodoByTODOId(int id) async {
+    final response = await http.get(
+      Uri.parse('$backendIp/todo/$id'),
+    );
+
+    print(response.body);
+
+    if (response.statusCode < 300) {
+      var jsonResponse = jsonDecode(response.body);
+
+      return TodoModel(
+        id: jsonResponse['id'],
+        title: jsonResponse['title'],
+        description: jsonResponse['description'],
+        isDone: jsonResponse['isDone'],
+        tag: jsonResponse['tag'],
+        User: jsonResponse['user'],
+        time: DateTime.parse(jsonResponse['time']),
+      );
+    } else {
+      throw Exception('Failed to load todo by ID');
+    }
+  }
+
+  Future<bool> deleteTodoByID(int id) async {
+    final response = await http.delete(
+      Uri.parse('$backendIp/todo/$id'),
+    );
+
+    print(response.body);
+
+    if (response.statusCode < 300) {
+      return true;
+    } else {
+      throw Exception('Failed to delete todo by ID');
+    }
+  }
+
+  Future<int?> addTodo(TodoModel todo) async {
+    final response = await http.post(Uri.parse('$backendIp/todo'),
+        body: jsonEncode({
+          "title": todo.title,
+          "description": todo.description,
+          "isDone": todo.isDone,
+          "tag": todo.tag,
+          "User": todo.User,
+          "time": todo.time,
+        }));
+
+    print(response.body);
+
+    if (response.statusCode < 300) {
+      var jsonResponse = jsonDecode(response.body);
+      return jsonResponse['id'];
+    } else {
+      throw Exception('Failed to add todo');
+    }
+  }
+
+  Future<bool> updateTodo(TodoModel todo, int id) async {
+    final response = await http.post(Uri.parse('$backendIp/todo/$id'),
+        body: jsonEncode({
+          "title": todo.title,
+          "description": todo.description,
+          "isDone": todo.isDone,
+          "tag": todo.tag,
+          "User": todo.User,
+          "time": todo.time,
+        }));
+
+    print(response.body);
+
+    if (response.statusCode < 300) {
+      return true;
+    } else {
+      throw Exception('Failed to update todo');
+    }
+  }
 }
