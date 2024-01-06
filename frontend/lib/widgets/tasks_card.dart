@@ -27,6 +27,7 @@ class _TasksCardState extends ConsumerState<TasksCard> {
     });
     TodoModel todoModel = widget.todo;
     todoModel.isDone = value;
+    print(todoModel.tags);
     bool result = await ApiService().updateTodo(todoModel, todoModel.id ?? 0);
     if (!result) {
       showToast("Something went wrong!");
@@ -139,11 +140,11 @@ class _TasksCardState extends ConsumerState<TasksCard> {
         tapPosition.dy + 40,
       ),
       items: <PopupMenuEntry>[
-        PopupMenuItem(
-          value: 'edit',
-          child: Text('edit',
-              style: TextStyle(color: MyColors().primary3, fontSize: 16)),
-        ),
+        // PopupMenuItem(
+        //   value: 'edit',
+        //   child: Text('edit',
+        //       style: TextStyle(color: MyColors().primary3, fontSize: 16)),
+        // ),
         PopupMenuItem(
           value: 'delete',
           child: Text(
