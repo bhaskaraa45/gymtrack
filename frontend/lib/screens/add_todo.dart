@@ -12,15 +12,19 @@ class AddTodoScreen extends StatefulWidget {
 class _AddTodoScreenState extends State<AddTodoScreen> {
   TextEditingController titleController = TextEditingController();
 
-  List<String> tags = ['Personal', 'Business', 'Study', 'Coding', 'Others'];
-
-  List<String> selectedTags = [
+  List<String> tags = [
     'Personal',
     'Business',
     'Study',
     'Coding',
-    'Others'
+    'Others',
   ];
+  List<bool> selected = List.generate(5, (index) => false);
+
+  List<String> selectedTags = [];
+
+  bool isCustomClicked = false;
+  TextEditingController customTagController = TextEditingController();
 
   String time = '12:00 AM';
   // DateTime selectedTime = DateTime.now();
@@ -78,7 +82,9 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
     }
   }
 
-  Widget oneTag(String tag) {
+  Widget oneTag(
+    String tag,
+  ) {
     return Stack(
       alignment: Alignment.topRight,
       children: [
@@ -109,7 +115,15 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  if (selectedTags.contains(tag)) {
+                    int index = tags.indexOf(tag);
+                    setState(() {
+                      selectedTags.remove(tag);
+                      selected[index] = false;
+                    });
+                  }
+                },
                 borderRadius: BorderRadius.circular(36),
                 child: Icon(
                   Icons.close_rounded,
@@ -153,40 +167,131 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
     );
   }
 
-  // Widget addTags() {
-  //   return Container(
-  //     width: double.infinity,
-  //     height: 60,
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(12),
-  //       // border: Border.all(color: MyColors().purple, width: 1)
-  //     ),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       mainAxisAlignment: MainAxisAlignment.start,
-  //       children: [
-  //         Padding(
-  //           padding: const EdgeInsets.all(12.0),
-  //           child: Text(
-  //             'Tags: ',
-  //             style: TextStyle(
-  //                 color: MyColors().secondary,
-  //                 fontSize: 18,
-  //                 fontWeight: FontWeight.w400),
-  //           ),
-  //         ),
-  //         Wrap(
-  //           crossAxisAlignment: WrapCrossAlignment.start,
-  //           children: listOfTagsWidget(),
-  //         ),
-  //         const SizedBox(
-  //           width: 20,
-  //         ),
-  //         addTagButton()
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget showTagAddingDialog(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: MyColors().secondary,
+      title: const Center(child: Text('Select tags')),
+      content: StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: listOfTagOptions(setState),
+          );
+        },
+      ),
+    );
+  }
+
+  listOfTagOptions(StateSetter setState) {
+    List<Widget> list =
+        List.generate(tags.length, (index) => tagOptionWidget(index, setState));
+    list.add(customTagWidget(setState));
+    list.add(doneButton());
+    return list;
+  }
+
+  doneButton() {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      alignment: Alignment.topRight,
+      child: TextButton(
+          onPressed: () {
+            String tag = customTagController.text.trim();
+            setState(() {
+              isCustomClicked = false;
+              customTagController.clear();
+              if (tag.isNotEmpty &&
+                  (!tags.contains(tag) && !selectedTags.contains(tag))) {
+                selectedTags.add(tag);
+                tags.add(tag);
+                selected.add(true);
+              }
+            });
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Done',
+            style: TextStyle(color: MyColors().primary2),
+          )),
+    );
+  }
+
+  customTagWidget(StateSetter setState) {
+    return Container(
+      child: !isCustomClicked
+          ? InkWell(
+              onTap: () {
+                setState(() {
+                  isCustomClicked = !isCustomClicked;
+                });
+              },
+              child: Text(
+                'Add Custom',
+                style: TextStyle(
+                    color: MyColors().primary2,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500),
+              ),
+            )
+          : TextField(
+              controller: customTagController,
+              style: TextStyle(
+                  color: MyColors().primary2,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        BorderSide(color: MyColors().primary, width: 2)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        BorderSide(color: MyColors().primary, width: 2)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        BorderSide(color: MyColors().primary3, width: 2.5)),
+              ),
+            ),
+    );
+  }
+
+  tagOptionWidget(int index, StateSetter setState) {
+    return Row(
+      children: [
+        Checkbox(
+          value: selected[index],
+          onChanged: (value) {
+            setState(() {
+              selected[index] = value!;
+            });
+            changeValues(index, selected[index]);
+          },
+        ),
+        Flexible(
+            child: Text(
+          tags[index],
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+              color: MyColors().primary2,
+              fontSize: 17,
+              fontWeight: FontWeight.w500),
+        ))
+      ],
+    );
+  }
+
+  changeValues(int index, bool value) {
+    setState(() {
+      if (value) {
+        selectedTags.add(tags[index]);
+      } else {
+        selectedTags.remove(tags[index]);
+      }
+    });
+  }
 
   addTagButton() {
     return Container(
@@ -198,7 +303,9 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () async {
+            showDialog(context: context, builder: showTagAddingDialog);
+          },
           borderRadius: BorderRadius.circular(12),
           child: Icon(
             Icons.add_rounded,
