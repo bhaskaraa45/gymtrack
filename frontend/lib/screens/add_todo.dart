@@ -40,7 +40,7 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
     if (DateTime.now().day == dateTime.day &&
         DateTime.now().month == dateTime.month &&
         DateTime.now().year == dateTime.year) {
-      return DateFormat('hh:mm a').format(dateTime);
+      return 'Today, ${DateFormat('hh:mm a').format(dateTime)}';
     } else {
       return DateFormat('hh:mm a, dd MMM yyyy').format(dateTime);
     }
@@ -330,23 +330,24 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
                 fontWeight: FontWeight.w400),
           ),
         ),
-        Container(
-          height: 40,
-          decoration: BoxDecoration(
-              color: MyColors().secondary,
-              borderRadius: BorderRadius.circular(12)),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () async {
-                await selectDateTime(context);
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 24, right: 24),
+        Flexible(
+          child: Container(
+            height: 40,
+            decoration: BoxDecoration(
+                color: MyColors().secondary,
+                borderRadius: BorderRadius.circular(12)),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () async {
+                  await selectDateTime(context);
+                },
+                borderRadius: BorderRadius.circular(12),
                 child: Center(
                   child: Text(
                     time,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: MyColors().primary2,
                         fontSize: 16,
@@ -361,33 +362,74 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
     );
   }
 
+  Widget addTask(Size size) {
+    return Container(
+      alignment: Alignment.topCenter,
+      width: 180,
+      height: 54,
+      decoration: BoxDecoration(
+        color: MyColors().primary2,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            //TODO: API CALL
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Center(
+            child: Text(
+              'Add Task',
+              style: TextStyle(
+                color: MyColors().textColor,
+                fontSize: 20,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MyColors().primary,
-      body: SafeArea(
-          child: Padding(
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      // backgroundColor: MyColors().primary,
+      child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            textFieldWidget('What do you need to do?', titleController, 1),
-            const SizedBox(
-              height: 16,
-            ),
-            textFieldWidget('Description', titleController, 3),
-            const SizedBox(
-              height: 16,
-            ),
-            // addTags()
-            dateTimeWidget(),
-            const SizedBox(
-              height: 20,
-            ),
-            finalTagWidget(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              textFieldWidget('What do you need to do?', titleController, 1),
+              const SizedBox(
+                height: 16,
+              ),
+              textFieldWidget('Description', titleController, 3),
+              const SizedBox(
+                height: 16,
+              ),
+              // addTags()
+              dateTimeWidget(),
+              const SizedBox(
+                height: 20,
+              ),
+              finalTagWidget(),
+              const SizedBox(
+                height: 32,
+              ),
+              Align(child: addTask(size)),
+              const SizedBox(
+                height: 40,
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 

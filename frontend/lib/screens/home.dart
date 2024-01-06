@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         tag: "tag",
         User: "bhaskar",
         time: DateTime(2024, 1, 1)),
-        TodoModel(
+    TodoModel(
         id: 10,
         title: "Do one dsa question",
         description: "1",
@@ -170,26 +170,32 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  Widget floatingActionButton(){
+  Widget floatingActionButton() {
     return FloatingActionButton(
-      onPressed: (){
-        Navigator.push(context, CustomPageRoute(child: const  AddTodoScreen(),startPos: const Offset(0, 1)));
+      onPressed: () {
+        // Navigator.push(context, CustomPageRoute(child: const  AddTodoScreen(),startPos: const Offset(0, 1)));
+        showModalBottomSheet(
+          backgroundColor: MyColors().primary,
+            context: context, builder: (ctx) => const AddTodoScreen());
       },
       backgroundColor: MyColors().purple,
-      child: Icon(Icons.add_rounded, size: 36,color: MyColors().primary2,),
+      child: Icon(
+        Icons.add_rounded,
+        size: 36,
+        color: MyColors().primary2,
+      ),
     );
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0.0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: MyColors().primary
-        ),
+        systemOverlayStyle:
+            SystemUiOverlayStyle(statusBarColor: MyColors().primary),
       ),
-      floatingActionButton: floatingActionButton() ,
+      floatingActionButton: floatingActionButton(),
       backgroundColor: MyColors().primary,
       body: SafeArea(
           child: Padding(
