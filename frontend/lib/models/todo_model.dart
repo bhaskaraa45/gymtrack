@@ -9,7 +9,12 @@ class TodoModel {
   final String User;
   final DateTime time;
 
-  TodoModel({required this.id, required this.title, required this.description, required this.isDone, required this.tag, required this.User, required this.time});
-
-
+  TodoModel(
+      {required this.id,
+      required this.title,
+      required this.description,
+      required this.isDone,
+      required this.tag,
+      required this.User,
+      required this.time});
 }

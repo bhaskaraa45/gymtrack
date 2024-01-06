@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/tag_model.dart';
 import 'package:todo/models/todo_model.dart';
+import 'package:todo/provider/todo_provider.dart';
 import 'package:todo/screens/add_todo.dart';
 import 'package:todo/widgets/categories_card.dart';
 import 'package:todo/widgets/svg_icon.dart';
 import 'package:todo/widgets/tasks_card.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<TagModel> list = [
     TagModel(tag: 'Personal', completeTasks: 18, tasks: 45),
     TagModel(tag: 'Business', completeTasks: 16, tasks: 22),
@@ -24,64 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
     TagModel(tag: 'Othets', completeTasks: 12, tasks: 18),
   ];
 
-  List<TodoModel> todos = [
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-    TodoModel(
-        id: 10,
-        title: "Do one dsa question",
-        description: "1",
-        isDone: false,
-        tag: "tag",
-        User: "bhaskar",
-        time: DateTime(2024, 1, 1)),
-  ];
+  // List<TodoModel> todos = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget headerIcons() {
     return Row(
@@ -156,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  Widget listOfTasks() {
+  Widget listOfTasks(List<TodoModel> todos) {
     return ListView.builder(
         itemCount: todos.length,
         itemBuilder: (ctx, index) {
@@ -174,8 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         // Navigator.push(context, CustomPageRoute(child: const  AddTodoScreen(),startPos: const Offset(0, 1)));
         showModalBottomSheet(
-          backgroundColor: MyColors().primary,
-            context: context, builder: (ctx) => const AddTodoScreen());
+            backgroundColor: MyColors().primary,
+            context: context,
+            builder: (ctx) => const AddTodoScreen());
       },
       backgroundColor: MyColors().purple,
       child: Icon(
@@ -188,6 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<TodoModel> todos = ref.watch(todoProvider);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0.0,
@@ -249,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 16),
               ),
             ),
-            Expanded(child: listOfTasks())
+            Expanded(child: listOfTasks(todos))
           ],
         ),
       )),
