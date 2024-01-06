@@ -80,7 +80,7 @@ class ApiService {
           "isDone": todo.isDone,
           "tag": todo.tag,
           "User": todo.User,
-          "time": todo.time,
+          "time": todo.time.toIso8601String(),
         }));
 
     print(response.body);
@@ -101,7 +101,7 @@ class ApiService {
           "isDone": todo.isDone,
           "tag": todo.tag,
           "User": todo.User,
-          "time": todo.time,
+          "time": todo.time.toIso8601String(),
         }));
 
     print(response.body);

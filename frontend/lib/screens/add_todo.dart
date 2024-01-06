@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/colors/colors.dart';
+import 'package:todo/models/todo_model.dart';
+import 'package:todo/provider/todo_provider.dart';
+import 'package:todo/services/api_services.dart';
 
-class AddTodoScreen extends StatefulWidget {
+class AddTodoScreen extends ConsumerStatefulWidget {
   const AddTodoScreen({super.key});
 
   @override
-  State<AddTodoScreen> createState() => _AddTodoScreenState();
+  ConsumerState<AddTodoScreen> createState() => _AddTodoScreenState();
 }
 
-class _AddTodoScreenState extends State<AddTodoScreen> {
+class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
   TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   List<String> tags = [
     'Personal',
@@ -374,8 +380,49 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            //TODO: API CALL
+          onTap: () async {
+            String title = titleController.text.trim();
+            if (title.isEmpty) {
+              Fluttertoast.showToast(
+                  msg: "Please enter title of the task.",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              return;
+            }
+
+            String finalTags = selectedTags.join(",");
+
+            TodoModel todo = TodoModel(
+                title: title,
+                description: descriptionController.text.trim(),
+                isDone: false,
+                User: 'bhaskar', //TODO: change USER
+                time: _selectedDateTime,
+                tag: finalTags.isNotEmpty ? finalTags : null);
+
+            int? id = await ApiService().addTodo(todo);
+
+            if (id != null) {
+              todo.id = id;
+              ref.read(todoProvider.notifier).addTodo(todo);
+              if (mounted) {
+                Navigator.pop(context);
+              }
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Something went wrong!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              if (mounted) {
+                Navigator.pop(context);
+              }
+            }
           },
           borderRadius: BorderRadius.circular(12),
           child: Center(
@@ -409,7 +456,7 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
               const SizedBox(
                 height: 16,
               ),
-              textFieldWidget('Description', titleController, 3),
+              textFieldWidget('Description', descriptionController, 3),
               const SizedBox(
                 height: 16,
               ),
