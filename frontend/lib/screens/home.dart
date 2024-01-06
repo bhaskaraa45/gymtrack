@@ -5,7 +5,6 @@ import 'package:todo/models/tag_model.dart';
 import 'package:todo/models/todo_model.dart';
 import 'package:todo/screens/add_todo.dart';
 import 'package:todo/widgets/categories_card.dart';
-import 'package:todo/widgets/custom_route.dart';
 import 'package:todo/widgets/svg_icon.dart';
 import 'package:todo/widgets/tasks_card.dart';
 
