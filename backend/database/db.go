@@ -53,7 +53,7 @@ func SearchData(id int) *models.TodoModel {
 	row := db.QueryRow(query, id)
 
 	var todo models.TodoModel
-	err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, pq.Array(&todo.Tags), &todo.User, &todo.Time)
+	err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.User, &todo.Time, pq.Array(&todo.Tags))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No data found for the given ID")
@@ -87,7 +87,6 @@ func SearchDataByUserId(id string) *models.TodoModel {
 
 	return &todo
 }
-
 
 func UpdateData(id int, todo models.TodoModel) bool {
 	fields := map[string]interface{}{
@@ -156,7 +155,7 @@ func SearchAllDataByUserId(id string) ([]models.TodoModel, error) {
 
 	for rows.Next() {
 		var todo models.TodoModel
-		err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, pq.Array(&todo.Tags), &todo.User, &todo.Time)
+		err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.User, &todo.Time, pq.Array(&todo.Tags))
 		if err != nil {
 			return nil, err
 		}
