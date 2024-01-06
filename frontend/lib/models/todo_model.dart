@@ -5,7 +5,7 @@ class TodoModel {
   String title;
   String? description;
   bool isDone;
-  String? tag;
+  List<String>? tags;
   String User;
   DateTime time;
 
@@ -14,7 +14,7 @@ class TodoModel {
       required this.title,
       this.description,
       required this.isDone,
-      this.tag,
+      this.tags,
       required this.User,
       required this.time});
 }

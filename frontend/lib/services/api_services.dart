@@ -23,7 +23,7 @@ class ApiService {
           title: todoJson['title'],
           description: todoJson['description'],
           isDone: todoJson['isDone'],
-          tag: todoJson['tag'],
+          tags: todoJson['tag'],
           User: todoJson['user'],
           time: DateTime.parse(todoJson['time']),
         );
@@ -49,7 +49,7 @@ class ApiService {
         title: jsonResponse['title'],
         description: jsonResponse['description'],
         isDone: jsonResponse['isDone'],
-        tag: jsonResponse['tag'],
+        tags: jsonResponse['tag'],
         User: jsonResponse['user'],
         time: DateTime.parse(jsonResponse['time']),
       );
@@ -78,7 +78,7 @@ class ApiService {
           "title": todo.title,
           "description": todo.description,
           "isDone": todo.isDone,
-          "tag": todo.tag,
+          "tags": todo.tags,
           "User": todo.User,
           "time": todo.time.toIso8601String(),
         }));
@@ -99,7 +99,7 @@ class ApiService {
           "title": todo.title,
           "description": todo.description,
           "isDone": todo.isDone,
-          "tag": todo.tag,
+          "tags": todo.tags,
           "User": todo.User,
           "time": todo.time.toIso8601String(),
         }));

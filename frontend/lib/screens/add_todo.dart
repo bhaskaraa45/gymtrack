@@ -393,15 +393,13 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
               return;
             }
 
-            String finalTags = selectedTags.join(",");
-
             TodoModel todo = TodoModel(
                 title: title,
                 description: descriptionController.text.trim(),
                 isDone: false,
                 User: 'bhaskar', //TODO: change USER
                 time: _selectedDateTime,
-                tag: finalTags.isNotEmpty ? finalTags : null);
+                tags: selectedTags);
 
             int? id = await ApiService().addTodo(todo);
 
@@ -443,39 +441,56 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Container(
-      // backgroundColor: MyColors().primary,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              textFieldWidget('What do you need to do?', titleController, 1),
-              const SizedBox(
-                height: 16,
-              ),
-              textFieldWidget('Description', descriptionController, 3),
-              const SizedBox(
-                height: 16,
-              ),
-              // addTags()
-              dateTimeWidget(),
-              const SizedBox(
-                height: 20,
-              ),
-              finalTagWidget(),
-              const SizedBox(
-                height: 32,
-              ),
-              Align(child: addTask(size)),
-              const SizedBox(
-                height: 40,
-              ),
-            ],
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(
+              top: 4,
+            ),
+            height: 4,
+            width: 64,
+            decoration: BoxDecoration(
+                color: Colors.grey, borderRadius: BorderRadius.circular(24)),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 24, 18, 0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  textFieldWidget(
+                      'What do you need to do?', titleController, 1),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  textFieldWidget('Description', descriptionController, 3),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  // addTags()
+                  dateTimeWidget(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  finalTagWidget(),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Align(child: addTask(size)),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
