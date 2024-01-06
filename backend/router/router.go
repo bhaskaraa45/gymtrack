@@ -11,7 +11,7 @@ func Router() *mux.Router {
 
 	r.HandleFunc("/todos/{id}", controller.GetTodos).Methods("GET")     //getAllTodos
 	r.HandleFunc("/todo/{id}", controller.GetTodo).Methods("GET")       //getTodoByTODOId
-	r.HandleFunc("/todo/{id}", controller.DeleteTodo).Methods("DELETE") //DeleteTodoByID
+	r.HandleFunc("/todo/{id}", controller.DeleteTodo).Methods("DELETE") //deleteTodoByID
 	r.HandleFunc("/todo", controller.CreateTodo).Methods("POST")        //addTodo
 	r.HandleFunc("/todo/{id}", controller.UpdateTodo).Methods("POST")   //updateTodo
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/bhaskaraa45/backend/todo_app/models"
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 var db *sql.DB
@@ -18,10 +18,10 @@ func InitDB(datab *sql.DB) {
 }
 
 func InsertData(data models.TodoModel) int {
-	query := `INSERT INTO todos (title, description, isDone, tag, "User", time )
+	query := `INSERT INTO todos (title, description, isDone, tags, "User", time)
 		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
 	var id int
-	err := db.QueryRow(query, data.Title, data.Description, data.IsDone, data.Tag, data.User, data.Time).Scan(&id)
+	err := db.QueryRow(query, data.Title, data.Description, data.IsDone, pq.Array(data.Tags), data.User, data.Time).Scan(&id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func SearchData(id int) *models.TodoModel {
 	row := db.QueryRow(query, id)
 
 	var todo models.TodoModel
-	err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.Tag, &todo.User, &todo.Time)
+	err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, pq.Array(&todo.Tags), &todo.User, &todo.Time)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("No data found for the given ID")
@@ -73,7 +73,7 @@ func SearchDataByUserId(id string) *models.TodoModel {
 	row := db.QueryRow(query, id)
 
 	var todo models.TodoModel
-	err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.Tag, &todo.User, &todo.Time)
+	err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, pq.Array(&todo.Tags), &todo.User, &todo.Time)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Printf("No data found for the given user ID: %s\n", id)
@@ -88,12 +88,13 @@ func SearchDataByUserId(id string) *models.TodoModel {
 	return &todo
 }
 
+
 func UpdateData(id int, todo models.TodoModel) bool {
 	fields := map[string]interface{}{
 		"title":       todo.Title,
 		"description": todo.Description,
 		"isDone":      todo.IsDone,
-		"tag":         todo.Tag,
+		"tags":        pq.Array(todo.Tags),
 		"\"User\"":    todo.User,
 		"time":        todo.Time,
 	}
@@ -155,7 +156,7 @@ func SearchAllDataByUserId(id string) ([]models.TodoModel, error) {
 
 	for rows.Next() {
 		var todo models.TodoModel
-		err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, &todo.Tag, &todo.User, &todo.Time)
+		err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.IsDone, pq.Array(&todo.Tags), &todo.User, &todo.Time)
 		if err != nil {
 			return nil, err
 		}
