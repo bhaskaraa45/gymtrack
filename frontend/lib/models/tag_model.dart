@@ -1,6 +1,7 @@
 class TagModel {
   final String tag;
-  final int tasks;
+  final String date;
   final int completeTasks;
-  TagModel({required this.tag, required this.completeTasks,required this.tasks});
+  final int tasks;
+  TagModel({required this.tag, required this.completeTasks,required this.date, this.tasks = 0});
 }

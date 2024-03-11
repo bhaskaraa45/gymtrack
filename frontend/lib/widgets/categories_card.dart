@@ -4,11 +4,11 @@ import 'package:todo/colors/colors.dart';
 class CategoriesCard extends StatelessWidget {
   const CategoriesCard(
       {super.key,
-      required this.tasks,
+      required this.date,
       required this.tag,
       required this.percentage,
       required this.color});
-  final int tasks;
+  final String date;
   final String tag;
   final double percentage;
   final Color color;
@@ -49,7 +49,7 @@ class CategoriesCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '$tasks tasks',
+              date,
               style: TextStyle(
                   color: MyColors().secondary.withOpacity(0.8), fontSize: 15.5),
             ),

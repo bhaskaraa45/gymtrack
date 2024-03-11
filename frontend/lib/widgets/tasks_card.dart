@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/todo_model.dart';
@@ -16,8 +15,6 @@ class TasksCard extends ConsumerStatefulWidget {
   ConsumerState<TasksCard> createState() => _TasksCardState();
 }
 
-enum SampleItem { delete, edit }
-
 class _TasksCardState extends ConsumerState<TasksCard> {
   bool isDone = false;
 
@@ -27,33 +24,31 @@ class _TasksCardState extends ConsumerState<TasksCard> {
     });
     TodoModel todoModel = widget.todo;
     todoModel.isDone = value;
-    print(todoModel.tags);
     bool result = await ApiService().updateTodo(todoModel, todoModel.id ?? 0);
     if (!result) {
-      showToast("Something went wrong!");
+      // showToast("Something went wrong!");
       setState(() {
         isDone = !value;
       });
     }
   }
 
-  showToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
+  // showToast(String msg) {
+  //   Fluttertoast.showToast(
+  //       msg: msg,
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.CENTER,
+  //       timeInSecForIosWeb: 1,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0);
+  // }
 
   deleteTodo() async {
     bool result = await ApiService().deleteTodoByID(widget.todo.id ?? 0);
-
     if (result) {
       ref.read(todoProvider.notifier).removeTodo(widget.todo);
     } else {
-      showToast("Something went wrong!");
+      // showToast("Something went wrong!");
     }
   }
 
@@ -122,8 +117,6 @@ class _TasksCardState extends ConsumerState<TasksCard> {
       isDone = widget.todo.isDone;
     });
   }
-
-  SampleItem? selectedMenu;
 
   void _showPopupMenu(BuildContext context, LongPressStartDetails details) {
     // Get the tap position

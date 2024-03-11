@@ -9,5 +9,6 @@ class MyColors{
   Color purple = const Color(0xffEB06FF);
   Color blue = const Color(0xff227BFF);
   Color sec = const Color(0xff46598C);
+  Color textColor2 = Color.fromARGB(255, 18, 18, 18);
 
 }

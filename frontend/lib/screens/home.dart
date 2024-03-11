@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/colors/colors.dart';
+import 'package:todo/main.dart';
 import 'package:todo/models/tag_model.dart';
 import 'package:todo/models/todo_model.dart';
 import 'package:todo/provider/todo_provider.dart';
 import 'package:todo/screens/add_todo.dart';
-import 'package:todo/services/api_services.dart';
+import 'package:todo/screens/drawer.dart';
 import 'package:todo/widgets/categories_card.dart';
 import 'package:todo/widgets/svg_icon.dart';
 import 'package:todo/widgets/tasks_card.dart';
+import 'package:todo/widgets/which_day.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -20,11 +22,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<TagModel> list = [
-    TagModel(tag: 'Personal', completeTasks: 18, tasks: 45),
-    TagModel(tag: 'Business', completeTasks: 16, tasks: 22),
-    TagModel(tag: 'Study', completeTasks: 1, tasks: 12),
-    TagModel(tag: 'Coding', completeTasks: 25, tasks: 25),
-    TagModel(tag: 'Othets', completeTasks: 12, tasks: 18),
+    TagModel(tag: 'Back', completeTasks: 3, date: "10/03/2024", tasks: 3),
+    TagModel(tag: 'Legs', completeTasks: 2, date: "11/03/2024", tasks: 3),
+    TagModel(tag: 'Shoulder', completeTasks: 3, date: "12/03/2024", tasks: 3),
+    TagModel(tag: 'Arms', completeTasks: 1, date: "13/03/2024", tasks: 3),
+    TagModel(tag: 'Chest', completeTasks: 3, date: "14/03/2024", tasks: 3),
   ];
 
   // List<TodoModel> todos = [];
@@ -34,19 +36,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
   }
 
-  Widget headerIcons() {
+  Widget headerIcons(BuildContext context) {
     return Row(
       children: [
-        InkWell(
-            onTap: () {},
-            borderRadius: BorderRadius.circular(36),
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: SvgIcon(
-                "assets/icons/menu.svg",
-                size: 20,
+        Builder(
+          builder: (BuildContext scaffoldContext) {
+            return InkWell(
+              onTap: () {
+                Scaffold.of(scaffoldContext).openDrawer();
+              },
+              borderRadius: BorderRadius.circular(36),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: SvgIcon(
+                  "assets/icons/menu.svg",
+                  size: 20,
+                ),
               ),
-            )),
+            );
+          },
+        ),
         const Spacer(),
         InkWell(
             onTap: () {},
@@ -95,11 +104,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         itemBuilder: (ctx, index) {
           double percentage =
               (list[index].completeTasks * 100.0) / list[index].tasks;
-          print(percentage);
           return Container(
             margin: EdgeInsets.only(right: 24),
             child: CategoriesCard(
-                tasks: list[index].tasks,
+                date: list[index].date,
                 tag: list[index].tag,
                 percentage: percentage,
                 color: index % 2 == 0 ? MyColors().blue : MyColors().purple),
@@ -142,6 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     List<TodoModel> todos = ref.watch(todoProvider);
     return Scaffold(
+      drawer: SideDrawer(),
       appBar: AppBar(
         toolbarHeight: 0.0,
         systemOverlayStyle:
@@ -158,7 +167,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(
               height: 24,
             ),
-            headerIcons(),
+            headerIcons(context),
             const SizedBox(
               height: 26,
             ),
@@ -172,7 +181,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(
-                'CATEGORIES',
+                'HISTORY',
                 style: TextStyle(
                     letterSpacing: -0.2,
                     color: MyColors().secondary,
@@ -185,8 +194,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             // ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
-              child:
-                  SizedBox(height: 100, child: Expanded(child: listOfTags())),
+              child: SizedBox(
+                  height: 100,
+                  child: Expanded(child: listOfTags())), //TODO:look
             ),
             const SizedBox(
               height: 36,
@@ -202,6 +212,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     fontSize: 16),
               ),
             ),
+            const Center(child: WhichDay(title: "BACK DAY")),
             Expanded(child: listOfTasks(todos))
           ],
         ),

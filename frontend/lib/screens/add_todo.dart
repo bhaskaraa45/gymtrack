@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/todo_model.dart';
@@ -382,16 +382,16 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
         child: InkWell(
           onTap: () async {
             String title = titleController.text.trim();
-            if (title.isEmpty) {
-              Fluttertoast.showToast(
-                  msg: "Please enter title of the task.",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
-              return;
-            }
+            // if (title.isEmpty) {
+            //   Fluttertoast.showToast(
+            //       msg: "Please enter title of the task.",
+            //       toastLength: Toast.LENGTH_SHORT,
+            //       gravity: ToastGravity.CENTER,
+            //       timeInSecForIosWeb: 1,
+            //       textColor: Colors.white,
+            //       fontSize: 16.0);
+            //   return;
+            // }
 
             TodoModel todo = TodoModel(
                 title: title,
@@ -410,13 +410,13 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
                 Navigator.pop(context);
               }
             } else {
-              Fluttertoast.showToast(
-                  msg: "Something went wrong!",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
+              // Fluttertoast.showToast(
+              //     msg: "Something went wrong!",
+              //     toastLength: Toast.LENGTH_SHORT,
+              //     gravity: ToastGravity.CENTER,
+              //     timeInSecForIosWeb: 1,
+              //     textColor: Colors.white,
+              //     fontSize: 16.0);
               if (mounted) {
                 Navigator.pop(context);
               }
@@ -438,13 +438,140 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
     );
   }
 
+  int sets = 3;
+
+  Widget setsWidget() {
+    return Container(
+        alignment: Alignment.topCenter,
+        padding: EdgeInsets.fromLTRB(8, 10, 8, 10),
+        width: 164,
+        height: 54,
+        margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: MyColors().purple, width: 1.5)),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                  onTap: () {
+                    if (sets <= 0) {
+                      setState(() {
+                        sets = 0;
+                        reps.clear();
+                      });
+                    } else {
+                      setState(() {
+                        sets--;
+                        reps.removeLast();
+                      });
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(24),
+                  child: const Icon(
+                    Icons.remove_rounded,
+                    color: Colors.white,
+                  )),
+              Text(
+                "Sets : $sets ",
+                style: TextStyle(
+                    letterSpacing: -0.2,
+                    color: MyColors().textColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18),
+              ),
+              InkWell(
+                  onTap: () {
+                    setState(() {
+                      sets++;
+                      setState(() {
+                        reps.add(12);
+                      });
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(24),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                  )),
+            ],
+          ),
+        ));
+  }
+
+  List reps = [12, 12, 12];
+  TextEditingController maxWt = TextEditingController();
+
+  everySetReps(int i) {
+    return Container(
+        margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
+        alignment: Alignment.topCenter,
+        padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+        // width: 210,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: MyColors().purple, width: 0.5)),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            InkWell(
+                onTap: () {
+                  if (sets <= 0) {
+                    setState(() {
+                      reps[i - 1] = 0;
+                    });
+                  } else {
+                    setState(() {
+                      reps[i - 1]--;
+                    });
+                  }
+                },
+                borderRadius: BorderRadius.circular(24),
+                child: const Icon(
+                  Icons.remove_rounded,
+                  color: Colors.white,
+                )),
+            Text(
+              "Set $i, Reps : ${reps[i - 1]} ",
+              style: TextStyle(
+                  letterSpacing: -0.2,
+                  color: MyColors().textColor,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18),
+            ),
+            InkWell(
+                onTap: () {
+                  setState(() {
+                    reps[i - 1]++;
+                  });
+                },
+                borderRadius: BorderRadius.circular(24),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: Colors.white,
+                )),
+          ],
+        ));
+  }
+
+  listOfeverySetReps() {
+    return ListView.builder(
+        itemCount: reps.length,
+        itemBuilder: (context, index) {
+          return everySetReps(index + 1);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+          // bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -459,38 +586,73 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(18, 24, 18, 0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  textFieldWidget(
-                      'What do you need to do?', titleController, 1),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  textFieldWidget('Description', descriptionController, 3),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  // addTags()
-                  dateTimeWidget(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  finalTagWidget(),
-                  const SizedBox(
-                    height: 32,
-                  ),
-                  Align(child: addTask(size)),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                textFieldWidget(
+                    'What exercise you need to do?', titleController, 1),
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    setsWidget(),
+                    Flexible(child: MaxWeight()),
+                  ],
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Expanded(child: listOfeverySetReps()),
+                const SizedBox(
+                  height: 16,
+                ),
+                Align(child: addTask(size)),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget MaxWeight() {
+    return Container(
+      width: 164,
+      height: 54,
+      // padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
+      child: Center(
+        child: TextField(
+          controller: maxWt,
+          keyboardType: TextInputType.number,
+          maxLines: 1,
+          cursorColor: MyColors().secondary,
+          style: TextStyle(
+              color: MyColors().textColor,
+              fontSize: 17,
+              fontWeight: FontWeight.w300),
+          decoration: InputDecoration(
+            hintText: "Max weight",
+            hintStyle: TextStyle(
+              color: MyColors().secondary,
+              fontWeight: FontWeight.w400,
+            ),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: MyColors().purple, width: 1.5)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: MyColors().purple, width: 1.5)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: MyColors().purple, width: 2.5)),
+          ),
+        ),
       ),
     );
   }
