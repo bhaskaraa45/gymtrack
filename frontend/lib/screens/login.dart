@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:todo/colors/colors.dart';
-import 'package:todo/models/user_model.dart';
-import 'package:todo/screens/home.dart';
-import 'package:todo/services/api_services.dart';
-import 'package:todo/widgets/custom_route.dart';
-import 'package:todo/widgets/svg_icon.dart';
+import 'package:gymtrack/colors/colors.dart';
+import 'package:gymtrack/models/user_model.dart';
+import 'package:gymtrack/screens/home.dart';
+import 'package:gymtrack/services/api_services.dart';
+import 'package:gymtrack/widgets/custom_route.dart';
+import 'package:gymtrack/widgets/svg_icon.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/colors/colors.dart';
+import 'package:gymtrack/colors/colors.dart';
 
 class WhichDay extends StatelessWidget {
   const WhichDay({super.key, required this.title});

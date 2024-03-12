@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:todo/colors/colors.dart';
-import 'package:todo/models/todo_model.dart';
-import 'package:todo/provider/todo_provider.dart';
-import 'package:todo/services/api_services.dart';
+import 'package:gymtrack/colors/colors.dart';
+import 'package:gymtrack/models/todo_model.dart';
+import 'package:gymtrack/provider/todo_provider.dart';
+import 'package:gymtrack/services/api_services.dart';
 
 class AddTodoScreen extends ConsumerStatefulWidget {
   const AddTodoScreen({super.key});

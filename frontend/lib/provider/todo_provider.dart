@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/models/todo_model.dart';
+import 'package:gymtrack/models/todo_model.dart';
 
 final todoProvider = StateNotifierProvider<TodoNotifier, List<TodoModel>>(
     (ref) => TodoNotifier());

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/colors/colors.dart';
-import 'package:todo/main.dart';
-import 'package:todo/models/tag_model.dart';
-import 'package:todo/models/todo_model.dart';
-import 'package:todo/provider/todo_provider.dart';
-import 'package:todo/screens/add_todo.dart';
-import 'package:todo/screens/drawer.dart';
-import 'package:todo/widgets/categories_card.dart';
-import 'package:todo/widgets/svg_icon.dart';
-import 'package:todo/widgets/tasks_card.dart';
-import 'package:todo/widgets/which_day.dart';
+import 'package:gymtrack/colors/colors.dart';
+import 'package:gymtrack/main.dart';
+import 'package:gymtrack/models/tag_model.dart';
+import 'package:gymtrack/models/todo_model.dart';
+import 'package:gymtrack/provider/todo_provider.dart';
+import 'package:gymtrack/screens/add_todo.dart';
+import 'package:gymtrack/screens/drawer.dart';
+import 'package:gymtrack/widgets/categories_card.dart';
+import 'package:gymtrack/widgets/svg_icon.dart';
+import 'package:gymtrack/widgets/tasks_card.dart';
+import 'package:gymtrack/widgets/which_day.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

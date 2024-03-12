@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/colors/colors.dart';
+import 'package:gymtrack/colors/colors.dart';
 
 class SideDrawer extends ConsumerStatefulWidget {
   const SideDrawer({super.key});

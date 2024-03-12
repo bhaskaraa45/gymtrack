@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/colors/colors.dart';
+import 'package:gymtrack/colors/colors.dart';
 
 class CategoriesCard extends StatelessWidget {
   const CategoriesCard(
