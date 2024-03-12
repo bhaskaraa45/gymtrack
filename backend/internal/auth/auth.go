@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"firebase.google.com/go/auth"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -51,29 +51,21 @@ func Verify(idToken string) (bool, string, int, string) {
 	return res, userEmail, id_, userName
 }
 
-func HandleLogin(c *fiber.Ctx) error {
+func HandleLogin(c *gin.Context) {
 
-	bodyBytes := c.Body()
-
-	if len(bodyBytes) == 0 {
-		return c.Status(http.StatusBadRequest).JSON(internal.NewCustomResponse("Empty request body", http.StatusBadRequest))
-	}
 	var data Token
-	if err := json.Unmarshal(bodyBytes, &data); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(internal.NewCustomResponse("Invalid JSON data", http.StatusBadRequest))
+	err := json.NewDecoder(c.Request.Body).Decode(&data)
+	if err != nil {
+		resp := internal.NewCustomResponse("ivalid json data!", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, resp)
+		return
 	}
 
-	// var data Token
-	// err := json.NewDecoder(c.Request().BodyStream()).Decode(&data)
-	// if err != nil {
-	// 	resp := internal.NewCustomResponse("invalid JSON data!", http.StatusBadRequest)
-	// 	return c.Status(http.StatusBadRequest).JSON(resp)
-	// }
 	idToken := data.IdToken
 
 	if idToken == "" {
-		return c.Status(http.StatusBadRequest).JSON(internal.NewCustomResponse("ID token not provided", http.StatusBadRequest))
-
+		c.JSON(http.StatusBadRequest, internal.NewCustomResponse("ID token not provided", http.StatusBadRequest))
+		return
 	}
 
 	log.Printf("got idToken: %v", idToken)
@@ -81,7 +73,8 @@ func HandleLogin(c *fiber.Ctx) error {
 	res, email, userId, name := Verify(data.IdToken)
 
 	if !res {
-		return c.Status(http.StatusUnauthorized).JSON(internal.NewCustomResponse("Failed to verify token", http.StatusUnauthorized))
+		c.JSON(http.StatusUnauthorized, internal.NewCustomResponse("Failed to verify token", http.StatusUnauthorized))
+		return
 	}
 
 	jwtToken := jwt.New(jwt.SigningMethodHS256)
@@ -93,24 +86,25 @@ func HandleLogin(c *fiber.Ctx) error {
 	tokenString, err := jwtToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
 		log.Printf("%v", err)
-		return c.Status(http.StatusInternalServerError).JSON(internal.NewCustomResponse("Failed to create token", http.StatusInternalServerError))
+		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Failed to create token", http.StatusInternalServerError))
+		return
 	}
 
-	cookie := new(fiber.Cookie)
-	cookie.Name = "token"
-	cookie.Value = tokenString
-	cookie.Domain = "localhost"
-	cookie.Path = "/"
-	cookie.Secure = true
-	cookie.HTTPOnly = true
-	cookie.Expires = time.Now().Add(15 * 24 * time.Hour)
-	cookie.SameSite = "None"
-
-	c.Cookie(cookie)
+	cookie := http.Cookie{
+		Name:     "token",
+		Domain:   "https://shrink.bhaskaraa45.me",
+		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
+		Expires:  time.Now().Add(15 * 24 * time.Hour),
+		Value:    tokenString,
+		SameSite: http.SameSiteNoneMode,
+	}
+	http.SetCookie(c.Writer, &cookie)
 
 	resp := make(map[string]any)
 	resp["email"] = email
 	resp["id"] = userId
 	resp["name"] = name
-	return c.Status(http.StatusOK).JSON(resp)
+	c.JSON(http.StatusOK, resp)
 }

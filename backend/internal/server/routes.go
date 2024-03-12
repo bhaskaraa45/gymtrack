@@ -1,8 +1,10 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"gymtrack/internal/auth"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 
@@ -32,6 +34,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
+	r.POST("/auth", auth.HandleLogin)
 
 	return r
 }
