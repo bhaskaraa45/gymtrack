@@ -1,8 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supertokens_flutter/supertokens.dart';
 import 'package:todo/colors/colors.dart';
+import 'package:todo/firebase_options.dart';
 import 'package:todo/models/todo_model.dart';
 import 'package:todo/provider/todo_provider.dart';
 import 'package:todo/screens/home.dart';
@@ -10,9 +11,8 @@ import 'package:todo/services/api_services.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  SuperTokens.init(
-    apiDomain: "http://localhost:8080",//TODO:change this
-    apiBasePath: "/auth",
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const ProviderScope(child: MyApp()));
 }
