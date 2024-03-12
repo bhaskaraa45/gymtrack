@@ -1,4 +1,4 @@
-package com.aa45.todo.todo
+package aa45.gymtrack
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todo/colors/colors.dart';
+import 'package:todo/models/user_model.dart';
 import 'package:todo/screens/home.dart';
+import 'package:todo/services/api_services.dart';
 import 'package:todo/widgets/custom_route.dart';
 import 'package:todo/widgets/svg_icon.dart';
 
@@ -37,9 +39,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await auth.signInWithCredential(credential);
 
+      print(googleAuth.idToken);
+
       //TODO:call backend, /auth
 
-      return true;
+      final resp = await ApiService().login(googleAuth.idToken ?? "");
+      print(resp);
+      if (resp != null) {
+        UserModel user = resp;
+        print(user.email);
+        return true;
+      }
+      return false;
     } catch (error) {
       //TODO:handle
       print(error);
