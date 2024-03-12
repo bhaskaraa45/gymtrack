@@ -1,20 +1,25 @@
 package server
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"gymtrack/internal/database"
+
+	"github.com/gofiber/fiber/v2"
 )
 
-type FiberServer struct {
+type Server struct {
 	*fiber.App
 	db database.Service
 }
 
-func New() *FiberServer {
-	server := &FiberServer{
+func New() *Server {
+	server := &Server{
 		App: fiber.New(),
 		db:  database.New(),
 	}
+
+	// var app *fiber.App
+
+	// app.Use(logger.New())
 
 	return server
 }

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supertokens_flutter/supertokens.dart';
 import 'package:todo/colors/colors.dart';
 import 'package:todo/models/todo_model.dart';
 import 'package:todo/provider/todo_provider.dart';
 import 'package:todo/screens/home.dart';
 import 'package:todo/services/api_services.dart';
 
-void main() async{
+void main() async {
   await dotenv.load(fileName: ".env");
+  SuperTokens.init(
+    apiDomain: "http://localhost:8080",//TODO:change this
+    apiBasePath: "/auth",
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -22,17 +27,17 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
 
-  fetchAllTodos()async{
-    List<TodoModel> todos = await ApiService().getAllTodos('bhaskar');//TODO: change user id
+  fetchAllTodos() async {
+    List<TodoModel> todos =
+        await ApiService().getAllTodos('bhaskar'); //TODO: change user id
     ref.read(todoProvider.notifier).addAllTodo(todos);
   }
-  
+
   @override
   void initState() {
     super.initState();
     fetchAllTodos();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -47,4 +52,3 @@ class _MyAppState extends ConsumerState<MyApp> {
     );
   }
 }
-
