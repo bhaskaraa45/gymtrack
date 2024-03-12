@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>785385039749-ghi7bcerjgkalj7nmvg8mjra6mqtfl1e.apps.googleusercontent.com</string>
+	<string>785385039749-7504h33cu4g4vg4lpfd17gh5jmdojhol.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.785385039749-ghi7bcerjgkalj7nmvg8mjra6mqtfl1e</string>
+	<string>com.googleusercontent.apps.785385039749-7504h33cu4g4vg4lpfd17gh5jmdojhol</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>785385039749-75kn0fjbv764hiuv7u99ihvnvsf3t3ti.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB-KDKqX_UIqWo63cZkp8tUnsuo0YYFqPU</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.aa45.todo.todo.RunnerTests</string>
+	<string>aa45.gymtrack.RunnerTests</string>
 	<key>PROJECT_ID</key>
 	<string>gymtrack-aa45</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:785385039749:ios:64938299d53eb19350c6ec</string>
+	<string>1:785385039749:ios:a78c8679ccc6d27650c6ec</string>
 </dict>
 </plist>

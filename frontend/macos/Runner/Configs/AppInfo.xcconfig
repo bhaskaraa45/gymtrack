@@ -8,7 +8,7 @@
 PRODUCT_NAME = todo
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.aa45.todo.todo
+PRODUCT_BUNDLE_IDENTIFIER = aa45.gymtrack
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.aa45.todo. All rights reserved.

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:785385039749:android:ee8fbc70cbdb63d450c6ec",
+        "mobilesdk_app_id": "1:785385039749:android:7481e9550efc6c3350c6ec",
         "android_client_info": {
-          "package_name": "com.aa45.todo.todo"
+          "package_name": "aa45.gymtrack"
         }
       },
       "oauth_client": [
@@ -29,6 +29,13 @@
             {
               "client_id": "785385039749-sfngcj36g3dokocc3ohfdmtf2ddau82m.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "785385039749-2e4btauja9fsr8ds8fbg3rv98e0imffr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "aa45.gymtrack"
+              }
             }
           ]
         }

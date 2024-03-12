@@ -45,17 +45,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBNxqaf9LCMXyhHBIPndqV1EXa8_ds00zo',
-    appId: '1:785385039749:web:05d8857f2ecf602b50c6ec',
+    appId: '1:785385039749:web:fb6330d18979608d50c6ec',
     messagingSenderId: '785385039749',
     projectId: 'gymtrack-aa45',
     authDomain: 'gymtrack-aa45.firebaseapp.com',
     storageBucket: 'gymtrack-aa45.appspot.com',
-    measurementId: 'G-BZZ1KCW0EY',
+    measurementId: 'G-YSXYQ74NSJ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCLGcEP_bnGwH1MJlGzI8BXkx1QzOYl6VI',
-    appId: '1:785385039749:android:ee8fbc70cbdb63d450c6ec',
+    appId: '1:785385039749:android:7481e9550efc6c3350c6ec',
     messagingSenderId: '785385039749',
     projectId: 'gymtrack-aa45',
     storageBucket: 'gymtrack-aa45.appspot.com',
@@ -63,21 +63,23 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyB-KDKqX_UIqWo63cZkp8tUnsuo0YYFqPU',
-    appId: '1:785385039749:ios:471d5d14285c733f50c6ec',
+    appId: '1:785385039749:ios:26f3595ed52c443050c6ec',
     messagingSenderId: '785385039749',
     projectId: 'gymtrack-aa45',
     storageBucket: 'gymtrack-aa45.appspot.com',
-    iosClientId: '785385039749-bg2uqchl7bqlra6895qfbeffodqs7bem.apps.googleusercontent.com',
-    iosBundleId: 'com.aa45.todo.todo',
+    androidClientId: '785385039749-75kn0fjbv764hiuv7u99ihvnvsf3t3ti.apps.googleusercontent.com',
+    iosClientId: '785385039749-2e4btauja9fsr8ds8fbg3rv98e0imffr.apps.googleusercontent.com',
+    iosBundleId: 'aa45.gymtrack',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyB-KDKqX_UIqWo63cZkp8tUnsuo0YYFqPU',
-    appId: '1:785385039749:ios:64938299d53eb19350c6ec',
+    appId: '1:785385039749:ios:a78c8679ccc6d27650c6ec',
     messagingSenderId: '785385039749',
     projectId: 'gymtrack-aa45',
     storageBucket: 'gymtrack-aa45.appspot.com',
-    iosClientId: '785385039749-ghi7bcerjgkalj7nmvg8mjra6mqtfl1e.apps.googleusercontent.com',
-    iosBundleId: 'com.aa45.todo.todo.RunnerTests',
+    androidClientId: '785385039749-75kn0fjbv764hiuv7u99ihvnvsf3t3ti.apps.googleusercontent.com',
+    iosClientId: '785385039749-7504h33cu4g4vg4lpfd17gh5jmdojhol.apps.googleusercontent.com',
+    iosBundleId: 'aa45.gymtrack.RunnerTests',
   );
 }
