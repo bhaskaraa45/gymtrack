@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"gymtrack/internal/model"
 	"log"
 	"os"
 	"time"
@@ -86,4 +87,17 @@ func (s *service) UserExists(email string) (bool, int) {
 	}
 
 	return false, 0
+}
+
+func (s *service) AddExercise(exercise model.ExerciseModel) (bool, int) {
+	query := "INSERT INTO workout (name, sets, reps, weight) VALUES ($1, $2, $3, $4) RETURNING id"
+	var id int
+	err := s.db.QueryRow(query, exercise.Name, exercise.Sets, exercise.Reps, exercise.Weights).Scan(&id)
+
+	if err != nil {
+		log.Printf("error adding exercise : %v", err)
+		return false, 0
+	}
+
+	return true, id
 }

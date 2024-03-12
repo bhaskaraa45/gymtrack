@@ -1,25 +1,36 @@
 package server
 
 import (
-	"gymtrack/internal/database"
+	"fmt"
+	"net/http"
+	"os"
+	"strconv"
+	"time"
 
-	"github.com/gofiber/fiber/v2"
+	_ "github.com/joho/godotenv/autoload"
+	"gymtrack/internal/database"
 )
 
 type Server struct {
-	*fiber.App
-	db database.Service
+	port int
+	db   database.Service
 }
 
-func New() *Server {
-	server := &Server{
-		App: fiber.New(),
-		db:  database.New(),
+func NewServer() *http.Server {
+	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	NewServer := &Server{
+		port: port,
+		db:   database.New(),
 	}
-
-	// var app *fiber.App
-
-	// app.Use(logger.New())
+	
+	// Declare Server config
+	server := &http.Server{
+		Addr:         fmt.Sprintf(":%d", NewServer.port),
+		Handler:      NewServer.RegisterRoutes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
 
 	return server
 }

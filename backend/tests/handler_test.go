@@ -1,40 +1,33 @@
 package tests
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"gymtrack/internal/server"
-	"io"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
-func TestHandler(t *testing.T) {
-	// Create a Fiber app for testing
-	app := fiber.New()
-	// Inject the Fiber app into the server
-	s := &server.Server{App: app}
-	// Define a route in the Fiber app
-	app.Get("/", s.HelloWorldHandler)
+func TestHelloWorldHandler(t *testing.T) {
+	s := &server.Server{}
+	r := gin.New()
+	r.GET("/", s.HelloWorldHandler)
 	// Create a test HTTP request
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
-		t.Fatalf("error creating request. Err: %v", err)
+		t.Fatal(err)
 	}
-	// Perform the request
-	resp, err := app.Test(req)
-	if err != nil {
-		t.Fatalf("error making request to server. Err: %v", err)
+	// Create a ResponseRecorder to record the response
+	rr := httptest.NewRecorder()
+	// Serve the HTTP request
+	r.ServeHTTP(rr, req)
+	// Check the status code
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
-	// Your test assertions...
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("expected status OK; got %v", resp.Status)
-	}
+	// Check the response body
 	expected := "{\"message\":\"Hello World\"}"
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatalf("error reading response body. Err: %v", err)
-	}
-	if expected != string(body) {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
+	if rr.Body.String() != expected {
+		t.Errorf("Handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
 	}
 }

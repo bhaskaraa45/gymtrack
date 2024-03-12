@@ -1,40 +1,49 @@
 package server
 
 import (
-	"gymtrack/internal/auth"
+	"github.com/gin-gonic/gin"
 	"net/http"
-
-	"github.com/gofiber/fiber/v2"
 )
 
-func (s *Server) RegisterFiberRoutes() {
 
-	s.App.Use(func(c *fiber.Ctx) error {
-		c.Set("Access-Control-Allow-Origin", "localhost")
-		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		c.Set("Access-Control-Allow-Credentials", "true")
+func (s *Server) RegisterRoutes() http.Handler {
+	r := gin.Default()
 
-		if c.Method() == fiber.MethodOptions {
-			return c.Status(http.StatusOK).SendString("")
+	// Add CORS middleware
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// Handle preflight requests
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
 		}
 
-		return c.Next()
+		//no guard waala routes
+		if c.FullPath() == "/" || c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" || c.FullPath() == "/logout" {
+			c.Next()
+			return
+		}
+		c.Next()
 	})
 
-	s.App.Get("/", s.HelloWorldHandler)
-	s.App.Get("/health", s.healthHandler)
-	s.App.Post("/auth", auth.HandleLogin)
+	r.GET("/", s.HelloWorldHandler)
+	r.GET("/health", s.healthHandler)
 
+	return r
 }
 
-func (s *Server) HelloWorldHandler(c *fiber.Ctx) error {
-	resp := map[string]string{
-		"message": "Hello World",
-	}
-	return c.JSON(resp)
+
+func (s *Server) HelloWorldHandler(c *gin.Context) {
+	resp := make(map[string]string)
+	resp["message"] = "Hello World"
+
+	c.JSON(http.StatusOK, resp)
 }
 
-func (s *Server) healthHandler(c *fiber.Ctx) error {
-	return c.JSON(s.db.Health())
+func (s *Server) healthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, s.db.Health())
 }

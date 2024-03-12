@@ -26,12 +26,12 @@ type Token struct {
 	IdToken string `json:"idToken"`
 }
 
-func Verify(idToken string) (bool, string, int) {
+func Verify(idToken string) (bool, string, int, string) {
 	ctx := context.Background()
 	token, err := client.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		log.Printf("Error verifying ID token: %v\n", err)
-		return false, "", 0
+		return false, "", 0, ""
 	}
 
 	// Get user email from the verified token
@@ -43,12 +43,12 @@ func Verify(idToken string) (bool, string, int) {
 	isExists, id := database.New().UserExists(userEmail)
 
 	if isExists {
-		return true, userEmail, id
+		return true, userEmail, id, userName
 	}
 
 	res, id_ := database.New().CreateUser(userEmail, userName)
 
-	return res, userEmail, id_
+	return res, userEmail, id_, userName
 }
 
 func HandleLogin(c *fiber.Ctx) error {
@@ -76,7 +76,9 @@ func HandleLogin(c *fiber.Ctx) error {
 
 	}
 
-	res, email, userId := Verify(data.IdToken)
+	log.Printf("got idToken: %v", idToken)
+
+	res, email, userId, name := Verify(data.IdToken)
 
 	if !res {
 		return c.Status(http.StatusUnauthorized).JSON(internal.NewCustomResponse("Failed to verify token", http.StatusUnauthorized))
@@ -106,7 +108,9 @@ func HandleLogin(c *fiber.Ctx) error {
 
 	c.Cookie(cookie)
 
-	resp := make(map[string]string)
+	resp := make(map[string]any)
 	resp["email"] = email
+	resp["id"] = userId
+	resp["name"] = name
 	return c.Status(http.StatusOK).JSON(resp)
 }

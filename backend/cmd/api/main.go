@@ -6,8 +6,6 @@ import (
 	"gymtrack/internal/auth"
 	"gymtrack/internal/server"
 	"log"
-	"os"
-	"strconv"
 
 	firebase "firebase.google.com/go"
 	_ "github.com/joho/godotenv/autoload"
@@ -29,14 +27,12 @@ func main() {
 	auth.FirebaseClient(client)
 	log.Printf("Firebase Admin SDK initialized")
 
-	server := server.New()
-	server.RegisterFiberRoutes()
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	err = server.Listen(fmt.Sprintf(":%d", port))
+	server := server.NewServer()
+
+	err = server.ListenAndServe()
 	if err != nil {
 		panic(fmt.Sprintf("cannot start server: %s", err))
 	}
 
 	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-
 }
