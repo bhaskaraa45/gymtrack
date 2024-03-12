@@ -7,9 +7,11 @@ import 'package:todo/firebase_options.dart';
 import 'package:todo/models/todo_model.dart';
 import 'package:todo/provider/todo_provider.dart';
 import 'package:todo/screens/home.dart';
+import 'package:todo/screens/login.dart';
 import 'package:todo/services/api_services.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -27,16 +29,9 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
 
-  fetchAllTodos() async {
-    List<TodoModel> todos =
-        await ApiService().getAllTodos('bhaskar'); //TODO: change user id
-    ref.read(todoProvider.notifier).addAllTodo(todos);
-  }
-
   @override
   void initState() {
     super.initState();
-    fetchAllTodos();
   }
 
   @override
@@ -48,7 +43,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: MyColors().primary),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }

@@ -401,7 +401,8 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
                 time: _selectedDateTime,
                 tags: selectedTags);
 
-            int? id = await ApiService().addTodo(todo);
+            // int? id = await ApiService().addTodo(todo);
+            int id = 0;
 
             if (id != null) {
               todo.id = id;

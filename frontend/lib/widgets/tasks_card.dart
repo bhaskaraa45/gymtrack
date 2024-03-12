@@ -24,13 +24,13 @@ class _TasksCardState extends ConsumerState<TasksCard> {
     });
     TodoModel todoModel = widget.todo;
     todoModel.isDone = value;
-    bool result = await ApiService().updateTodo(todoModel, todoModel.id ?? 0);
-    if (!result) {
-      // showToast("Something went wrong!");
-      setState(() {
-        isDone = !value;
-      });
-    }
+    // bool result = await ApiService().updateTodo(todoModel, todoModel.id ?? 0);
+    // if (!result) {
+    //   // showToast("Something went wrong!");
+    //   setState(() {
+    //     isDone = !value;
+    //   });
+    // }
   }
 
   // showToast(String msg) {
@@ -44,12 +44,12 @@ class _TasksCardState extends ConsumerState<TasksCard> {
   // }
 
   deleteTodo() async {
-    bool result = await ApiService().deleteTodoByID(widget.todo.id ?? 0);
-    if (result) {
-      ref.read(todoProvider.notifier).removeTodo(widget.todo);
-    } else {
-      // showToast("Something went wrong!");
-    }
+    // bool result = await ApiService().deleteTodoByID(widget.todo.id ?? 0);
+    // if (result) {
+    //   ref.read(todoProvider.notifier).removeTodo(widget.todo);
+    // } else {
+    //   // showToast("Something went wrong!");
+    // }
   }
 
   Widget checkBox() {
