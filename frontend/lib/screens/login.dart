@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gymtrack/colors/colors.dart';
 import 'package:gymtrack/models/user_model.dart';
@@ -18,12 +19,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   Future<bool> signInWithGoogle() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      print(googleUser);
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn(serverClientId: dotenv.env["GOOGLE_CLIENT"])
+              .signIn();
 
       if (googleUser == null) {
         return false;
@@ -37,19 +36,16 @@ class _LoginScreenState extends State<LoginScreen> {
         idToken: googleAuth.idToken,
       );
 
-      await auth.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      print(googleAuth.idToken);
+      final resp = await ApiService().login(googleAuth.idToken ?? "aa45");
 
-      //TODO:call backend, /auth
-
-      final resp = await ApiService().login(googleAuth.idToken ?? "");
-      print(resp);
+      
       if (resp != null) {
         UserModel user = resp;
-        print(user.email);
         return true;
       }
+
       return false;
     } catch (error) {
       //TODO:handle

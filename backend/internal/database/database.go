@@ -16,7 +16,7 @@ import (
 type Service interface {
 	Health() map[string]string
 	UserExists(email string) (bool, int)
-	CreateUser(name string, email string) (bool, int)
+	CreateUser(user model.UserModel) (bool, int)
 }
 
 type service struct {
@@ -54,15 +54,26 @@ func (s *service) Health() map[string]string {
 	}
 }
 
-func (s *service) CreateUser(email string, name string) (bool, int) {
-	que := "INSERT INTO users (email, name) VALUES ( $1, $2 ) RETURNING id"
+func (s *service) CreateUser(user model.UserModel) (bool, int) {
+	que := "INSERT INTO users (email, name, uid) VALUES ( $1, $2, $3 ) RETURNING id"
 	var id int
-	err := s.db.QueryRow(que, email, name).Scan(&id)
+	err := s.db.QueryRow(que, user.Email, user.Name, user.UserId).Scan(&id)
 	if err != nil {
 		log.Printf("Failed to create user, err: %v", err)
 		return false, 0
 	}
 	return true, id
+}
+
+func (s *service) GetUserById(id int) (bool, model.UserModel) {
+	que := "SELECT * FROM users WHERE id = $1"
+	var user model.UserModel
+	err := s.db.QueryRow(que, id).Scan(&user.Id, &user.Name, &user.Email, &user.UserId)
+	if err != nil {
+		log.Printf("Failed to create user, err: %v", err)
+		return false, user
+	}
+	return true, user
 }
 
 func (s *service) UserExists(email string) (bool, int) {
