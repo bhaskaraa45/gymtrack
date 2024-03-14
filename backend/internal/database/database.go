@@ -19,6 +19,7 @@ type Service interface {
 	CreateUser(user model.UserModel) (bool, int)
 	UpdateRefreshToken(id int, rtoken string) bool
 	GetUserById(id int) (bool, model.UserModel)
+	VerifyRefreshToken(rtoken string, id int) bool
 }
 
 type service struct {
@@ -69,16 +70,15 @@ func (s *service) CreateUser(user model.UserModel) (bool, int) {
 }
 
 func (s *service) UpdateRefreshToken(id int, rtoken string) bool {
-    que := "UPDATE users SET rtoken = $1 WHERE id = $2"
-    _, err := s.db.Exec(que, rtoken, id)
-    if err != nil {
-        log.Printf("userID: %v, refreshToken: %v", id, rtoken)
-        log.Printf("Failed to update refresh token, err: %v", err)
-        return false
-    }
-    return true
+	que := "UPDATE users SET rtoken = $1 WHERE id = $2"
+	_, err := s.db.Exec(que, rtoken, id)
+	if err != nil {
+		log.Printf("userID: %v, refreshToken: %v", id, rtoken)
+		log.Printf("Failed to update refresh token, err: %v", err)
+		return false
+	}
+	return true
 }
-
 
 func (s *service) GetUserById(id int) (bool, model.UserModel) {
 	que := "SELECT * FROM users WHERE id = $1"
@@ -113,6 +113,19 @@ func (s *service) UserExists(email string) (bool, int) {
 	}
 
 	return false, 0
+}
+
+func (s *service) VerifyRefreshToken(rtoken string, id int) bool {
+	query := "SELECT EXISTS(SELECT 1 FROM users WHERE rtoken = $1 AND id = $2)"
+	var exists bool
+
+	err := s.db.QueryRow(query, rtoken, id).Scan(&exists)
+	if err != nil {
+		log.Printf("error Verifying RefreshToken: %v", err)
+		return false
+	}
+
+	return exists
 }
 
 func (s *service) AddExercise(exercise model.ExerciseModel) (bool, int) {

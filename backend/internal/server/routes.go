@@ -2,15 +2,16 @@ package server
 
 import (
 	"gymtrack/internal"
-	"gymtrack/internal/auth"
+	"gymtrack/internal/controller"
 	"gymtrack/internal/tokens"
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-var userId int
+var userId int //use it if needed
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
@@ -47,6 +48,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 				return
 			} else {
 				userId = id
+				log.Println(userId)
 				c.Next()
 				return
 			}
@@ -60,7 +62,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
-	r.POST("/auth", auth.HandleLogin)
+	r.POST("/auth", controller.HandleLogin)
+	r.POST("/refreshToken", controller.HandleRefreshToken) 
 
 	return r
 }
