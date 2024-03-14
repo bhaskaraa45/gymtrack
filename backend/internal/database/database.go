@@ -17,6 +17,8 @@ type Service interface {
 	Health() map[string]string
 	UserExists(email string) (bool, int)
 	CreateUser(user model.UserModel) (bool, int)
+	UpdateRefreshToken(id int, rtoken string) bool
+	GetUserById(id int) (bool, model.UserModel)
 }
 
 type service struct {
@@ -35,6 +37,7 @@ func New() Service {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, database)
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
+		log.Fatalf("ERROR: %v", err)
 	}
 	s := &service{db: db}
 	return s
@@ -65,12 +68,24 @@ func (s *service) CreateUser(user model.UserModel) (bool, int) {
 	return true, id
 }
 
+func (s *service) UpdateRefreshToken(id int, rtoken string) bool {
+    que := "UPDATE users SET rtoken = $1 WHERE id = $2"
+    _, err := s.db.Exec(que, rtoken, id)
+    if err != nil {
+        log.Printf("userID: %v, refreshToken: %v", id, rtoken)
+        log.Printf("Failed to update refresh token, err: %v", err)
+        return false
+    }
+    return true
+}
+
+
 func (s *service) GetUserById(id int) (bool, model.UserModel) {
 	que := "SELECT * FROM users WHERE id = $1"
 	var user model.UserModel
-	err := s.db.QueryRow(que, id).Scan(&user.Id, &user.Name, &user.Email, &user.UserId)
+	err := s.db.QueryRow(que, id).Scan(&user.Id, &user.Name, &user.Email, &user.UserId, &user.RefreshToken)
 	if err != nil {
-		log.Printf("Failed to create user, err: %v", err)
+		log.Printf("Failed to get user, err: %v", err)
 		return false, user
 	}
 	return true, user
