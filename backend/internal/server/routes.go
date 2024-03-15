@@ -4,14 +4,13 @@ import (
 	"gymtrack/internal"
 	"gymtrack/internal/controller"
 	"gymtrack/internal/tokens"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-var userId int //use it if needed
+var UserId int //use it if needed
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
@@ -29,7 +28,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		}
 
 		// No guard waala (no authorization required) routes.
-		if c.FullPath() == "/" || c.FullPath() == "/auth" || c.FullPath() == "/logout" || c.FullPath() == "/refreshToken" {
+		if c.FullPath() == "/update" || c.FullPath() == "/auth" || c.FullPath() == "/" || c.FullPath() == "/refreshToken" {
 			c.Next()
 			return
 		}
@@ -47,8 +46,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 				c.Abort()
 				return
 			} else {
-				userId = id
-				log.Println(userId)
+				UserId = id
+				c.Set("UserId", id)
 				c.Next()
 				return
 			}
@@ -63,7 +62,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
 	r.POST("/auth", controller.HandleLogin)
-	r.POST("/refreshToken", controller.HandleRefreshToken) 
+	r.POST("/refreshToken", controller.HandleRefreshToken)
+	r.POST("/post", controller.HandleAdd)
+	r.POST("/update", controller.HandleUpdate)
 
 	return r
 }

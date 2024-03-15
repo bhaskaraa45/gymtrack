@@ -23,6 +23,9 @@ type Service interface {
 	VerifyRefreshToken(rtoken string, id int) bool
 	AddExercise(exercise model.ExerciseModel) (bool, int)
 	UpdateExercise(exercise model.ExerciseModel, id int) bool
+	AddWorkoutInHistory(date time.Time, userID int) (int, error)
+	AddDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool
+	DeleteDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool
 }
 
 type service struct {
@@ -222,6 +225,36 @@ func (s *service) UpdateExercise(exercise model.ExerciseModel, id int) bool {
 		log.Printf("No rows updated for ID: %d\n", id)
 	} else {
 		log.Printf("Updated %d rows for ID: %d\n", affectedRows, id)
+	}
+	return true
+}
+
+func (s *service) AddWorkoutInHistory(date time.Time, userID int) (int, error) {
+	query := `INSERT INTO history (date, user_id) VALUES ($1, $2) RETURNING id`
+	var id int
+	err := s.db.QueryRow(query, date, userID).Scan(&id)
+	if err != nil {
+		return 0, fmt.Errorf("error adding history to the database: %v", err)
+	}
+	return id, nil
+}
+
+func (s *service) AddDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool {
+	query := `INSERT INTO history_workout_link (history_id, workout_id) VALUES ($1, $2)`
+	_, err := s.db.Exec(query, history_id, workout_id)
+	if err != nil {
+		log.Printf("error adding history_workout_link to the database: %v", err)
+		return false
+	}
+	return true
+}
+
+func (s *service) DeleteDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool {
+	query := `DELETE FROM history_workout_link WHERE history_id = $1 AND workout_id = $2`
+	_, err := s.db.Exec(query, history_id, workout_id)
+	if err != nil {
+		log.Printf("error deleting history_workout_link to the database: %v", err)
+		return false
 	}
 	return true
 }

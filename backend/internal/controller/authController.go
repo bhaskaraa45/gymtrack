@@ -18,7 +18,7 @@ type Token struct {
 
 type RToken struct {
 	RefreshToken string `json:"refreshToken"`
-	UserId       int    `json: id`
+	UserId       int    `json:"id"`
 }
 
 func HandleLogin(c *gin.Context) {
@@ -26,6 +26,7 @@ func HandleLogin(c *gin.Context) {
 	var data Token
 	err := json.NewDecoder(c.Request.Body).Decode(&data)
 	if err != nil {
+		log.Println(err)
 		resp := internal.NewCustomResponse("ivalid json data!", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, resp)
 		return
