@@ -7,6 +7,7 @@ import (
 	"gymtrack/internal/model"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -20,6 +21,8 @@ type Service interface {
 	UpdateRefreshToken(id int, rtoken string) bool
 	GetUserById(id int) (bool, model.UserModel)
 	VerifyRefreshToken(rtoken string, id int) bool
+	AddExercise(exercise model.ExerciseModel) (bool, int)
+	UpdateExercise(exercise model.ExerciseModel, id int) bool
 }
 
 type service struct {
@@ -129,9 +132,9 @@ func (s *service) VerifyRefreshToken(rtoken string, id int) bool {
 }
 
 func (s *service) AddExercise(exercise model.ExerciseModel) (bool, int) {
-	query := "INSERT INTO workout (name, sets, reps, weight) VALUES ($1, $2, $3, $4) RETURNING id"
+	query := "INSERT INTO workout (name, sets, reps, weight, isdone) VALUES ($1, $2, $3, $4, $5) RETURNING id"
 	var id int
-	err := s.db.QueryRow(query, exercise.Name, exercise.Sets, exercise.Reps, exercise.Weights).Scan(&id)
+	err := s.db.QueryRow(query, exercise.Name, exercise.Sets, exercise.Reps, exercise.Weights, exercise.IsDone).Scan(&id)
 
 	if err != nil {
 		log.Printf("error adding exercise : %v", err)
@@ -139,4 +142,86 @@ func (s *service) AddExercise(exercise model.ExerciseModel) (bool, int) {
 	}
 
 	return true, id
+}
+
+func (s *service) UpdateExercise(exercise model.ExerciseModel, id int) bool {
+	fields := map[string]interface{}{
+		"name":   exercise.Name,
+		"isDone": exercise.IsDone,
+		"sets":   exercise.Sets,
+		"reps":   exercise.Reps,
+		"weight": exercise.Weights,
+	}
+
+	var setStatements []string
+	var values []interface{}
+	var index = 1
+
+	// for k, v := range fields {
+	// 	if v != nil && v != "" && v != 0 && len(v)!=0{
+	// 		setStatements = append(setStatements, fmt.Sprintf("%s = $%d", k, index))
+	// 		values = append(values, v)
+	// 		index++
+	// 		fmt.Println(v)
+	// 	}
+	// }
+
+	for k, v := range fields {
+		switch v := v.(type) {
+		case []int:
+			if len(v) > 0 {
+				setStatements = append(setStatements, fmt.Sprintf("%s = $%d", k, index))
+				values = append(values, v)
+				index++
+			}
+		case []string:
+			if len(v) > 0 {
+				setStatements = append(setStatements, fmt.Sprintf("%s = $%d", k, index))
+				values = append(values, v)
+				index++
+			}
+		case int:
+			if v != 0 {
+				setStatements = append(setStatements, fmt.Sprintf("%s = $%d", k, index))
+				values = append(values, v)
+				index++
+			}
+		case bool:
+			setStatements = append(setStatements, fmt.Sprintf("%s = $%d", k, index))
+			values = append(values, v)
+			index++
+		case string:
+			if v != "" {
+				setStatements = append(setStatements, fmt.Sprintf("%s = $%d", k, index))
+				values = append(values, v)
+				index++
+			}
+		}
+	}
+
+	if index == 1 {
+		log.Println("No data given")
+		return false
+	}
+
+	query := fmt.Sprintf(`UPDATE workout SET %s WHERE id = $%d`, strings.Join(setStatements, ", "), index)
+
+	values = append(values, id)
+	result, err := s.db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return false
+	}
+
+	affectedRows, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err.Error())
+		return false
+	}
+	if affectedRows == 0 {
+		log.Printf("No rows updated for ID: %d\n", id)
+	} else {
+		log.Printf("Updated %d rows for ID: %d\n", affectedRows, id)
+	}
+	return true
 }
