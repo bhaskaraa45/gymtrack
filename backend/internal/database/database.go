@@ -34,6 +34,8 @@ type Service interface {
 	WorkoutInHistoryExists(date time.Time, userID int) (bool, int)
 	GetDataInLinkedTableHistoryWorkout(history_id int) ([]model.HistoryWorkoutLinkModel, error)
 	GetHistoryByUserIDAndDate(userID int, date time.Time) (model.HistoryModel, error)
+	AddSchedule(schedule model.ScheduleModel, userId int) (int, error)
+	ExistsSchedule(userId int) (bool, error)
 }
 
 type service struct {

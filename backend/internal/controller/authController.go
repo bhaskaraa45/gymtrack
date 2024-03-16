@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"gymtrack/internal"
-	"gymtrack/internal/database"
 	"gymtrack/internal/tokens"
 	"log"
 	"net/http"
@@ -48,10 +47,10 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	isExists, userId := database.New().UserExists(user.Email)
+	isExists, userId := db.UserExists(user.Email)
 
 	if isExists {
-		e, currUser := database.New().GetUserById(userId)
+		e, currUser := db.GetUserById(userId)
 		if !e {
 			c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("internal error", http.StatusInternalServerError))
 			return
@@ -78,7 +77,7 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	isCreated, userId := database.New().CreateUser(user)
+	isCreated, userId := db.CreateUser(user)
 
 	if !isCreated {
 		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("internal error(CreateUser)", http.StatusInternalServerError))
@@ -91,7 +90,7 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	isUpdated := database.New().UpdateRefreshToken(userId, refreshToken)
+	isUpdated := db.UpdateRefreshToken(userId, refreshToken)
 
 	if !isUpdated {
 		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("internal error(UpdateRefreshToken)", http.StatusInternalServerError))
@@ -142,7 +141,7 @@ func HandleRefreshToken(c *gin.Context) { //POST RToken(json) in body
 		return
 	}
 
-	result := database.New().VerifyRefreshToken(refreshToken, id)
+	result := db.VerifyRefreshToken(refreshToken, id)
 
 	if !result {
 		c.JSON(http.StatusUnauthorized, internal.NewCustomResponse("Unauthorized, invalid refresh token or user id", http.StatusUnauthorized))

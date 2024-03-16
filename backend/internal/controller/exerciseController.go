@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"gymtrack/internal"
-	"gymtrack/internal/database"
 	"gymtrack/internal/model"
 	"log"
 	"net/http"
@@ -25,6 +24,11 @@ func HandleAdd(c *gin.Context) {
 		return
 	}
 
+	if c.Request.Body == nil || c.Request.ContentLength == 0 {
+        resp := internal.NewCustomResponse("No body provided!", http.StatusBadRequest)
+        c.JSON(http.StatusBadRequest, resp)
+        return
+    }
 	var exercise model.ExerciseModel
 
 	err := json.NewDecoder(c.Request.Body).Decode(&exercise)
@@ -35,7 +39,7 @@ func HandleAdd(c *gin.Context) {
 		return
 	}
 
-	added, w_id := database.New().AddExercise(exercise)
+	added, w_id := db.AddExercise(exercise)
 
 	if !added {
 		resp := internal.NewCustomResponse("internal error", http.StatusInternalServerError)
@@ -43,9 +47,9 @@ func HandleAdd(c *gin.Context) {
 		return
 	}
 
-	isExists, h_id := database.New().WorkoutInHistoryExists(time.Now(), userId)
+	isExists, h_id := db.WorkoutInHistoryExists(time.Now(), userId)
 	if !isExists {
-		h_id, err = database.New().AddWorkoutInHistory(time.Now(), userId)
+		h_id, err = db.AddWorkoutInHistory(time.Now(), userId)
 		if err != nil {
 			resp := internal.NewCustomResponse("internal error", http.StatusInternalServerError)
 			c.JSON(http.StatusBadRequest, resp)
@@ -53,7 +57,7 @@ func HandleAdd(c *gin.Context) {
 		}
 	}
 
-	result := database.New().AddDataInLinkedTableHistoryWorkout(h_id, w_id)
+	result := db.AddDataInLinkedTableHistoryWorkout(h_id, w_id)
 	if !result {
 		resp := internal.NewCustomResponse("internal error", http.StatusInternalServerError)
 		c.JSON(http.StatusInternalServerError, resp)
@@ -71,20 +75,26 @@ func HandleUpdate(c *gin.Context) {
 
 	err := json.NewDecoder(c.Request.Body).Decode(&exercise)
 
+	if c.Request.Body == nil || c.Request.ContentLength == 0 {
+        resp := internal.NewCustomResponse("No body provided!", http.StatusBadRequest)
+        c.JSON(http.StatusBadRequest, resp)
+        return
+    }
+
 	if err != nil {
 		log.Printf("error: %v", err)
-		resp := internal.NewCustomResponse("ivalid json data!", http.StatusBadRequest)
+		resp := internal.NewCustomResponse("Invalid json data!", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
 	if exercise.Id == 0 {
-		resp := internal.NewCustomResponse("id is not provided", http.StatusBadRequest)
+		resp := internal.NewCustomResponse("Id is not provided", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
-	updated := database.New().UpdateExercise(exercise, exercise.Id)
+	updated := db.UpdateExercise(exercise, exercise.Id)
 	if !updated {
 		resp := internal.NewCustomResponse("internal error", http.StatusInternalServerError)
 		c.JSON(http.StatusInternalServerError, resp)
@@ -108,7 +118,7 @@ func HandleGetHistory(c *gin.Context) {
 		return
 	}
 
-	history, err := database.New().GetHistoryByUserID(userId)
+	history, err := db.GetHistoryByUserID(userId)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -127,7 +137,7 @@ func HandleGetHistory(c *gin.Context) {
 			historyIDs[i] = h.ID
 		}
 	}
-	exercisesMap, err := database.New().GetExercisesByHistoryIDs(historyIDs)
+	exercisesMap, err := db.GetExercisesByHistoryIDs(historyIDs)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Internal error", http.StatusInternalServerError))
@@ -157,14 +167,14 @@ func HandleGetToday(c *gin.Context) {
 		return
 	}
 
-	history, err := database.New().GetHistoryByUserIDAndDate(userId, time.Now())
+	history, err := db.GetHistoryByUserIDAndDate(userId, time.Now())
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Internal error, couldn't fetch history data", http.StatusInternalServerError))
 		return
 	}
 
-	exercisesMap, err := database.New().GetExercisesByHistoryIDs([]int{history.ID})
+	exercisesMap, err := db.GetExercisesByHistoryIDs([]int{history.ID})
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Internal error, couldn't fetch history data", http.StatusInternalServerError))
