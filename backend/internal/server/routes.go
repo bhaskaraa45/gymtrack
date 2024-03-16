@@ -65,7 +65,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.POST("/refreshToken", controller.HandleRefreshToken)
 	r.POST("/post", controller.HandleAdd)
 	r.POST("/update", controller.HandleUpdate)
-	r.GET("/getHistory", controller.HandleGetAllHistory)
+	r.GET("/getHistory", controller.HandleGetHistory)
+	r.GET("/getToday", controller.HandleGetToday)
 
 	return r
 }

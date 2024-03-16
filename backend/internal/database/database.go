@@ -30,9 +30,10 @@ type Service interface {
 	AddWorkoutInHistory(date time.Time, userID int) (int, error)
 	AddDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool
 	DeleteDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool
-	GetHistory(userID int) ([]model.HistoryModel, error)
+	GetHistoryByUserID(userID int) ([]model.HistoryModel, error)
 	WorkoutInHistoryExists(date time.Time, userID int) (bool, int)
 	GetDataInLinkedTableHistoryWorkout(history_id int) ([]model.HistoryWorkoutLinkModel, error)
+	GetHistoryByUserIDAndDate(userID int, date time.Time) (model.HistoryModel, error)
 }
 
 type service struct {
@@ -177,60 +178,6 @@ func (s *service) DeleteExercise(id int) (bool, error) {
 
 	return true, nil
 }
-
-// func (s *service) GetExercisesByHistoryIDs(historyIDs []int) (map[int][]model.ExerciseModel, error) {
-// 	// Check for empty slice to avoid SQL query error
-// 	if len(historyIDs) == 0 {
-// 		return make(map[int][]model.ExerciseModel), nil
-// 	}
-
-// 	// Convert historyIDs slice into a string of comma-separated values for SQL IN clause
-// 	var idsPlaceholder []string
-// 	var params []interface{}
-// 	for i, id := range historyIDs {
-// 		idsPlaceholder = append(idsPlaceholder, fmt.Sprintf("$%d", i+1))
-// 		params = append(params, id)
-// 	}
-
-// 	// Prepare the SQL query
-// 	query := fmt.Sprintf(`
-//         SELECT hw.history_id, w.id, w.name, w.sets, w.reps, w.weight, w.isdone
-//         FROM history_workout_link hw
-//         JOIN workout w ON hw.workout_id = w.id
-//         WHERE hw.history_id IN (%s)
-//     `, strings.Join(idsPlaceholder, ","))
-
-// 	// Execute the query
-// 	rows, err := s.db.Query(query, params...)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("error querying exercises by history IDs: %v", err)
-// 	}
-// 	defer rows.Close()
-
-// 	// Map to hold the results
-// 	exercisesByHistory := make(map[int][]model.ExerciseModel)
-
-// 	// Iterate through the result set
-// 	for rows.Next() {
-// 		var hID int
-// 		var exercise model.ExerciseModel
-
-// 		// Scan each row's data into our variables
-// 		if err := rows.Scan(&hID, &exercise.Id, &exercise.Name, &exercise.Sets, &exercise.Reps, &exercise.Weights, &exercise.IsDone); err != nil {
-// 			return nil, fmt.Errorf("error scanning exercise record: %v", err)
-// 		}
-
-// 		// Append the exercise to the corresponding slice in the map
-// 		exercisesByHistory[hID] = append(exercisesByHistory[hID], exercise)
-// 	}
-
-// 	// Check for errors encountered during iteration
-// 	if err := rows.Err(); err != nil {
-// 		return nil, fmt.Errorf("error iterating over exercises records: %v", err)
-// 	}
-
-// 	return exercisesByHistory, nil
-// }
 
 func (s *service) GetExercisesByHistoryIDs(historyIDs []int) (map[int][]model.ExerciseModel, error) {
 
@@ -411,7 +358,7 @@ func (s *service) WorkoutInHistoryExists(date time.Time, userID int) (bool, int)
 	return false, 0
 }
 
-func (s *service) GetHistory(userID int) ([]model.HistoryModel, error) {
+func (s *service) GetHistoryByUserID(userID int) ([]model.HistoryModel, error) {
 	query := `SELECT * FROM history WHERE user_id = $1`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
@@ -434,6 +381,16 @@ func (s *service) GetHistory(userID int) ([]model.HistoryModel, error) {
 	}
 
 	return history, nil
+}
+
+func (s *service) GetHistoryByUserIDAndDate(userID int, date time.Time) (model.HistoryModel, error) {
+	query := `SELECT * FROM history WHERE user_id = $1 and date = $2`
+	var entry model.HistoryModel
+	err := s.db.QueryRow(query, userID, date).Scan(&entry.ID, &entry.Date, &entry.UserID)
+	if err != nil {
+		return entry, fmt.Errorf("error retrieving history from the database: %v", err)
+	}
+	return entry, nil
 }
 
 func (s *service) AddDataInLinkedTableHistoryWorkout(history_id int, workout_id int) bool {

@@ -96,7 +96,7 @@ func HandleUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func HandleGetAllHistory(c *gin.Context) {
+func HandleGetHistory(c *gin.Context) {
 	userIdInterface, exists := c.Get("UserId")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, internal.NewCustomResponse("Unauthorized, user ID not found", http.StatusUnauthorized))
@@ -108,7 +108,7 @@ func HandleGetAllHistory(c *gin.Context) {
 		return
 	}
 
-	history, err := database.New().GetHistory(userId)
+	history, err := database.New().GetHistoryByUserID(userId)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -117,13 +117,15 @@ func HandleGetAllHistory(c *gin.Context) {
 	}
 
 	if len(history) == 0 {
-		c.JSON(http.StatusOK, []model.ExerciseModel{})
+		c.JSON(http.StatusOK, make(map[string][]model.ExerciseModel))
 		return
 	}
 
 	historyIDs := make([]int, len(history))
 	for i, h := range history {
-		historyIDs[i] = h.ID
+		if h.Date.Format("02-01-2006") != time.Now().Format("02-01-2006") {
+			historyIDs[i] = h.ID
+		}
 	}
 	exercisesMap, err := database.New().GetExercisesByHistoryIDs(historyIDs)
 	if err != nil {
@@ -138,6 +140,42 @@ func HandleGetAllHistory(c *gin.Context) {
 			formattedDate := h.Date.Format("02-01-2006")
 			resp[formattedDate] = ex
 		}
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func HandleGetToday(c *gin.Context) {
+	userIdInterface, exists := c.Get("UserId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, internal.NewCustomResponse("Unauthorized, user ID not found", http.StatusUnauthorized))
+		return
+	}
+	userId, ok := userIdInterface.(int)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Internal error, user ID invalid", http.StatusInternalServerError))
+		return
+	}
+
+	history, err := database.New().GetHistoryByUserIDAndDate(userId, time.Now())
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Internal error, couldn't fetch history data", http.StatusInternalServerError))
+		return
+	}
+
+	exercisesMap, err := database.New().GetExercisesByHistoryIDs([]int{history.ID})
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, internal.NewCustomResponse("Internal error, couldn't fetch history data", http.StatusInternalServerError))
+		return
+	}
+
+	resp := make(map[string][]model.ExerciseModel)
+
+	if ex, found := exercisesMap[history.ID]; found {
+		formattedDate := history.Date.Format("02-01-2006")
+		resp[formattedDate] = ex
 	}
 
 	c.JSON(http.StatusOK, resp)
