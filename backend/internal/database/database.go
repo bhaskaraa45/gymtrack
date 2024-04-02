@@ -36,6 +36,7 @@ type Service interface {
 	GetHistoryByUserIDAndDate(userID int, date time.Time) (model.HistoryModel, error)
 	AddSchedule(schedule model.ScheduleModel, userId int) (int, error)
 	ExistsSchedule(userId int) (bool, error)
+	UpdateSchedule(schedule model.ScheduleModel, userId int) (error)
 }
 
 type service struct {

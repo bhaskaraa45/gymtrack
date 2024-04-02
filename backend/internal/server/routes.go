@@ -68,6 +68,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/getHistory", controller.HandleGetHistory)
 	r.GET("/getToday", controller.HandleGetToday)
 	r.POST("/schedule", controller.HandleAddSchedule)
+	r.POST("/schedule/update", controller.HandleUpdateSchedule)
 
 	return r
 }

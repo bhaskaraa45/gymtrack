@@ -24,3 +24,12 @@ func (s *service) ExistsSchedule(userId int) (bool, error) {
 	}
 	return exists, nil
 }
+
+func (s *service) UpdateSchedule(schedule model.ScheduleModel, userId int) error {
+	query := "UPDATE schedule SET titles = $1 WHERE user_id = $2"
+	_, err := s.db.Exec(query, schedule.Titles, userId)
+	if err != nil {
+		return fmt.Errorf("failed to create user, err: %v", err)
+	}
+	return nil
+}
